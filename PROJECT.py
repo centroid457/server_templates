@@ -12,7 +12,7 @@ class PROJECT:
     AUTHOR_HOMEPAGE: str = "https://github.com/centroid457/"
 
     # PROJECT ----------------------------------------------
-    NAME_IMPORT: str = "prj_name"
+    NAME_IMPORT: str = "server_templates"
     NAME_INSTALL: str = NAME_IMPORT.replace("_", "-")
     KEYWORDS: List[str] = [
         "kw1",
@@ -24,14 +24,13 @@ class PROJECT:
 
     # README -----------------------------------------------
     # add DOUBLE SPACE at the end of all lines! for correct representation in MD-viewers
-    DESCRIPTION_SHORT: str = "descr short (git/prg descr)"
-    DESCRIPTION_LONG: str = """designed for ..."""
+    DESCRIPTION_SHORT: str = "templates for servers"
+    DESCRIPTION_LONG: str = """designed for keep all servers templates in one place"""
     FEATURES: List[str] = [
         # "feat1",
         # ["feat2", "block1", "block2"],
 
-        "feat1",
-        ["feat2", "block1", "block2"],
+        "",
     ]
 
     # HISTORY -----------------------------------------------
