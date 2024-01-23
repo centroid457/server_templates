@@ -1,0 +1,46 @@
+# PYTHON ===================
+# virtual env --------------
+.venv/
+venv/
+env/
+
+# byte-compiled ------------
+**/__pycache__/
+**/*.py[cod]
+
+# IDE ----------------------
+.idea/
+.vscode/
+
+# PYTEST -------------------
+**/.pytest_cache/
+
+# PYPI DISTRIBUTION --------
+build/
+dist/
+*.egg-info/
+
+# documentation ------------
+documentation/build/*
+documentation/source/_build/*
+
+# some other ---------------
+htmlcov/
+.coverage
+*~lock*
+manage.sh
+todo.org
+*.orig
+
+# USER =====================
+# TEMP ---------------------
+TEMPORARY/
+-*
+
+# user saved data ----------
+USERDATA/
+
+# ========================================
+# SPECIAL FOR THIS PROJECT ---------------
+
+# ========================================
