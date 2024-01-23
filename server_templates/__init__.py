@@ -1,1 +1,1 @@
-from .aiohttp import *
+from server_templates.aiohttp.main import *
