@@ -1,17 +1,20 @@
 import pathlib
 from typing import *
-import aiohttp
+from aiohttp import web
 
 
 # =====================================================================================================================
-Type_Dict = Dict[str, Optional[str]]
-Type_Path = Union[str, pathlib.Path]
-Type_Value = Union[str, NoReturn, None]
 
 
 # =====================================================================================================================
-class NEW_CLASS____:
-    pass
+class ServerAiohttp:
+    _app: web.Application
+
+    def __init__(self):
+        self._app: web.Application = web.Application()
+
+    def run(self) -> None:
+        web.run_app(self._app)
 
 
 # =====================================================================================================================
