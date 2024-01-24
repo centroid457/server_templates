@@ -18,7 +18,9 @@ class ServerAiohttp:
 
     def run(self) -> None:
         setup_routes(self._app)
-        self._app['config'] = config
+        self._app["config"] = config
+        print(f"{self._app['config']=}")
+        # self._app['config']={'postgres': {'user': 'aiohttpdemo_user', 'password': 'aiohttpdemo_pass', 'host': 'localhost', 'port': 5432}}
         web.run_app(self._app)
 
 
