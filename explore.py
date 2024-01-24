@@ -1,6 +1,6 @@
 import server_templates
 import testplans
 
-thread = server_templates.ServerAiohttpBase(testplans.TpMultyDutBase())
-thread.start()
-thread.join()
+thread = server_templates.ServerAiohttpBase(testplans.TpMultyDutBase()).run()
+# thread.start()
+# thread.join()

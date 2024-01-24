@@ -1,8 +1,10 @@
 import pathlib
+import time
 from typing import *
 from aiohttp import web
 import yaml
 from threading import Thread
+import asyncio
 
 
 # =====================================================================================================================
@@ -10,31 +12,35 @@ BASE_DIR = pathlib.Path(__file__).parent
 
 
 # =====================================================================================================================
-class ServerAiohttpBase(Thread):
-    # SETTINGS =============================
-    CONFIG_PATH = BASE_DIR / 'config.yaml'
+class ServerAiohttpBase:
+    # SETTINGS -----------------------------
+    CONFIG_PATH: pathlib.Path = BASE_DIR / 'config.yaml'
 
-    # AUX ==================================
+    # AUX ----------------------------------
     _app: web.Application
     data: Any
 
     def __init__(self, data: Any = None):
         super().__init__()
+        self.data = data
+        self._app: web.Application = web.Application()
 
-        self.ROUTES_GET: Dict[str, Callable] = {
+    @property
+    def SETTINGS__ROUTES_GET(self) -> Dict[str, Callable]:
+        result = {
             '/': self.response__index,
             '/start': self.response__start,
             '/stop': self.response__stop,
         }
+        return result
 
-        self.data = data
-        self._app: web.Application = web.Application()
-
+    # =================================================================================================================
     def run(self) -> None:
         self.setup_routes()
         self.apply_config()
         web.run_app(self._app)
 
+    # =================================================================================================================
     def apply_config(self, path=None):
         path = path or self.CONFIG_PATH
         if path:
@@ -45,7 +51,7 @@ class ServerAiohttpBase(Thread):
         # self._app['config']={'postgres': {'user': 'aiohttpdemo_user', 'password': 'aiohttpdemo_pass', 'host': 'localhost', 'port': 5432}}
 
     def setup_routes(self):
-        for route, response in self.ROUTES_GET.items():
+        for route, response in self.SETTINGS__ROUTES_GET.items():
             self._app.router.add_get(route, response)
 
     # =================================================================================================================
@@ -68,7 +74,10 @@ class ServerAiohttpBase(Thread):
         """
         if self.data and self.data.progress is not None:
             msg = msg%{"progress": self.data.progress}
-        print(msg)
+        # print(msg)
+        print(11)
+        await asyncio.sleep(3)
+        print(2222)
         return web.Response(text=msg, content_type='text/html')
 
     async def response__start(self, request):
@@ -86,7 +95,7 @@ class ServerAiohttpBase(Thread):
       </body>
     </html>
         """
-        print(msg)
+        # print(msg)
         self.data.signal__tp_start.emit()
         return web.Response(text=msg, content_type='text/html')
 
@@ -105,7 +114,7 @@ class ServerAiohttpBase(Thread):
           </body>
         </html>
         """
-        print(msg)
+        # print(msg)
         self.data.signal__tp_stop.emit()
         return web.Response(text=msg, content_type='text/html')
 
