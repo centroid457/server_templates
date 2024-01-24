@@ -1,19 +1,22 @@
 import pathlib
 from typing import *
 from aiohttp import web
-
-from .settings import config
-
-
-# =====================================================================================================================
+import yaml
+from threading import Thread
 
 
 # =====================================================================================================================
-class ServerAiohttp:
+BASE_DIR = pathlib.Path(__file__).parent
+config_path = BASE_DIR / 'config.yaml'
+
+
+# =====================================================================================================================
+class ServerAiohttpBase(Thread):
     _app: web.Application
     data: Any
 
     def __init__(self, data: Any = None):
+        super().__init__()
         self.ROUTES_GET: Dict[str, Callable] = {
             '/': self.response__index,
             '/start': self.response__start,
@@ -25,15 +28,21 @@ class ServerAiohttp:
 
     def run(self) -> None:
         self.setup_routes()
-        self._app["config"] = config
+        self._app["config"] = self.get_config(config_path)
         print(f"{self._app['config']=}")
         # self._app['config']={'postgres': {'user': 'aiohttpdemo_user', 'password': 'aiohttpdemo_pass', 'host': 'localhost', 'port': 5432}}
         web.run_app(self._app)
+
+    def get_config(self, path):
+        with open(path) as f:
+            config = yaml.safe_load(f)
+        return config
 
     def setup_routes(self):
         for route, response in self.ROUTES_GET.items():
             self._app.router.add_get(route, response)
 
+    # =================================================================================================================
     async def response__index(self, request):
         msg = """
     <!doctype html>
