@@ -2,5 +2,4 @@ import server_templates
 import testplans
 
 
-tpgui = testplans.TpGui()
-server_templates.ServerAiohttp(tpgui.DATA).run()
+server_templates.ServerAiohttp(testplans.TpMultyDutBase()).run()
