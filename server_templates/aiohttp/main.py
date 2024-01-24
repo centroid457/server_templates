@@ -3,6 +3,7 @@ from typing import *
 from aiohttp import web
 
 from .routes import setup_routes
+from .settings import config
 
 
 # =====================================================================================================================
@@ -17,6 +18,7 @@ class ServerAiohttp:
 
     def run(self) -> None:
         setup_routes(self._app)
+        self._app['config'] = config
         web.run_app(self._app)
 
 
