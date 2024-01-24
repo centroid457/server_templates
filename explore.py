@@ -1,4 +1,6 @@
 import server_templates
+import testplans
 
 
-server_templates.ServerAiohttp().run()
+tpgui = testplans.TpGui()
+server_templates.ServerAiohttp(tpgui.DATA).run()
