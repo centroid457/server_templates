@@ -14,7 +14,7 @@ BASE_DIR = pathlib.Path(__file__).parent
 # =====================================================================================================================
 class ServerAiohttpBase:
     # SETTINGS -----------------------------
-    CONFIG_PATH: pathlib.Path = BASE_DIR / 'config.yaml'
+    CONFIG_PATH: pathlib.Path = BASE_DIR / 'aiohttp_config.yaml'
 
     # AUX ----------------------------------
     _app: web.Application
