@@ -1,17 +1,14 @@
-# prj_name (v0.0.0)
+# server_templates (v0.0.1)
 
 ## DESCRIPTION_SHORT
-Descr short (git/prg descr)
+Templates for servers
 
 ## DESCRIPTION_LONG
-designed for ...
+Designed for keep all servers templates in one place
 
 
 ## Features
-1. feat1  
-2. feat2:  
-	- block1  
-	- block2  
+1. aiohttp  
 
 
 ********************************************************************************
@@ -25,13 +22,13 @@ See the [HISTORY.md](HISTORY.md) file for release history.
 
 ## Installation
 ```commandline
-pip install prj-name
+pip install server-templates
 ```
 
 
 ## Import
 ```python
-from prj_name import *
+from server_templates import *
 ```
 
 
@@ -41,23 +38,18 @@ See tests and sourcecode for other examples.
 
 ------------------------------
 ### 1. example1.py
-
 ```python
-from aiohttp_template import *
+from server_templates import *
+
 
 # =====================================================================================================================
 if __name__ == "__main__":
-	NEW_CLASS____()
+    NEW_CLASS____()
+
 
 # =====================================================================================================================
 
 print(NEW_CLASS____())
-```
-
-------------------------------
-### 2. example2.py
-```python
-
 ```
 
 ********************************************************************************
