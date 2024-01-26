@@ -15,7 +15,9 @@ class PROJECT:
     NAME_IMPORT: str = "server_templates"
     NAME_INSTALL: str = NAME_IMPORT.replace("_", "-")
     KEYWORDS: List[str] = [
-        "kw1",
+        "api",
+        "api server",
+        "http server",
     ]
     CLASSIFIERS_TOPICS_ADD: List[str] = [
         # "Topic :: Communications",
@@ -30,11 +32,11 @@ class PROJECT:
         # "feat1",
         # ["feat2", "block1", "block2"],
 
-        "",
+        "aiohttp",
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 0, 0)
+    VERSION: Tuple[int, int, int] = (0, 0, 1)
     VERSION_STR: str = ".".join(map(str, VERSION))
     TODO: List[str] = [
         "..."
@@ -43,7 +45,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "..."
+        "try simple aiohttp"
     ]
 
 

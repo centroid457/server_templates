@@ -6,7 +6,7 @@ from tempfile import TemporaryDirectory
 from typing import *
 from configparser import ConfigParser
 
-from aiohttp_template import *
+from server_templates import *
 
 
 # =====================================================================================================================
