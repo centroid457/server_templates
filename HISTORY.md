@@ -11,6 +11,10 @@
 ********************************************************************************
 ## NEWS
 
+0.0.4 (2024/01/29 18:55:34)
+------------------------------
+- finish fix keep all pkgs_internal in setup/build pypi  
+
 0.0.3 (2024/01/29 18:38:57)
 ------------------------------
 - try fix import internal packages (before it is not keep it)=in setup  
