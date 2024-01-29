@@ -7,6 +7,12 @@ with open("README.md", "r") as f:
     readme = f.read()
 
 
+packages = [PROJECT.NAME_IMPORT, ]
+pkgs_internal = find_packages(where=PROJECT.NAME_IMPORT)
+for name in pkgs_internal:
+    packages.append(f"{PROJECT.NAME_IMPORT}.{name}")
+
+
 # =====================================================================================================================
 setup(
   version=PROJECT.VERSION_STR,
@@ -42,7 +48,7 @@ setup(
     "Source": f"https://github.com/centroid457/{PROJECT.NAME_IMPORT}",
   },
 
-  packages=[PROJECT.NAME_IMPORT, *find_packages(PROJECT.NAME_IMPORT)],
+  packages=packages,
   install_requires=[],
   python_requires=">=3.6"
 )
