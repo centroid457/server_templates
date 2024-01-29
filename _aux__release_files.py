@@ -231,7 +231,7 @@ class History(ReleaseFileBase):
         group: List[str] = [
             f"## NEWS",
             "",
-            f"{PROJECT.VERSION_STR} ({time.strftime("%Y/%m/%d %H:%M:%S")})",
+            f"{PROJECT.VERSION_STR} ({time.strftime('%Y/%m/%d %H:%M:%S')})",
             self.LINE_SEPARATOR_PART,
         ]
         news_new = self._lines_create__group(PROJECT.NEWS, nums=False)

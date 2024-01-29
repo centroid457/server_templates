@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from PROJECT import PROJECT
 
 
@@ -42,7 +42,7 @@ setup(
     "Source": f"https://github.com/centroid457/{PROJECT.NAME_IMPORT}",
   },
 
-  packages=[PROJECT.NAME_IMPORT, ],
+  packages=[PROJECT.NAME_IMPORT, find_packages(PROJECT.NAME_IMPORT)],
   install_requires=[],
   python_requires=">=3.6"
 )
