@@ -3,18 +3,17 @@ import time
 from typing import *
 from aiohttp import web
 import yaml
-from threading import Thread
 import asyncio
 
 
 # =====================================================================================================================
-BASE_DIR = pathlib.Path(__file__).parent
+pass
 
 
 # =====================================================================================================================
 class ServerAiohttpBase:
     # SETTINGS -----------------------------
-    CONFIG_PATH: pathlib.Path = BASE_DIR / 'aiohttp_config.yaml'
+    CONFIG_PATH: pathlib.Path = pathlib.Path(__file__).parent / 'aiohttp_config.yaml'
 
     # AUX ----------------------------------
     _app: web.Application
