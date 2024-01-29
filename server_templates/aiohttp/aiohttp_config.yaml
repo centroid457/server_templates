@@ -1,4 +1,4 @@
-# config/polls.yaml
+# aiohttp_config.yaml
 postgres:
   user: aiohttpdemo_user
   password: aiohttpdemo_pass
