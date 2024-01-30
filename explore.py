@@ -1,6 +1,15 @@
 import server_templates
-import testplans
-thread = server_templates.ServerAiohttpBase(testplans.TpMultyDutBase()).run()
+import pathlib
+from testplans import TpMultyDutBase
+
+class Tp(TpMultyDutBase):
+    START_GUI = True
+
+tp = Tp()
+# print(tp.DIRPATH_TCS)
+# print(tp.DIRPATH_TCS.exists())
+# print(pathlib.Path.cwd())
+thread = server_templates.ServerAiohttpBase(tp).run()
 
 
 # # ====================================
