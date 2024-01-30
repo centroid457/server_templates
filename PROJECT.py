@@ -36,7 +36,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 0, 6)
+    VERSION: Tuple[int, int, int] = (0, 0, 7)
     VERSION_STR: str = ".".join(map(str, VERSION))
     TODO: List[str] = [
         "..."
@@ -45,7 +45,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "fix start with no config file",
+        "fix start with no config file=second",
     ]
 
 

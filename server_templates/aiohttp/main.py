@@ -56,7 +56,12 @@ class ServerAiohttpBase(Thread):
             with open(config_filepath) as f:
                 config = yaml.safe_load(f)
                 self._app["config"] = config
-        print(f"{self._app['config']=}")
+            print(f"{self._app['config']=}")
+        else:
+            msg = f"[WARN] no file {self.CONFIG_FILEPATH=}"
+            print(msg)
+            self._app["config"] = {}
+
         # self._app['config']={'postgres': {'user': 'aiohttpdemo_user', 'password': 'aiohttpdemo_pass', 'host': 'localhost', 'port': 5432}}
 
     def setup_routes(self):
