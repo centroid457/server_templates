@@ -36,7 +36,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 0, 4)
+    VERSION: Tuple[int, int, int] = (0, 0, 5)
     VERSION_STR: str = ".".join(map(str, VERSION))
     TODO: List[str] = [
         "..."
@@ -45,7 +45,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "finish fix keep all pkgs_internal in setup/build pypi",
+        "apply as thread",
     ]
 
 

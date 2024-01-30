@@ -3,7 +3,10 @@ import time
 from typing import *
 from aiohttp import web
 import yaml
+
 import asyncio
+# from PyQt5.QtCore import QThread
+from threading import Thread
 
 
 # =====================================================================================================================
@@ -11,7 +14,7 @@ pass
 
 
 # =====================================================================================================================
-class ServerAiohttpBase:
+class ServerAiohttpBase(Thread):
     # SETTINGS -----------------------------
     CONFIG_FILEPATH: pathlib.Path = pathlib.Path(__file__).parent / 'aiohttp_config.yaml'
 
@@ -37,7 +40,12 @@ class ServerAiohttpBase:
     def run(self) -> None:
         self.setup_routes()
         self.apply_config()
-        web.run_app(self._app)
+
+        web.run_app(app=self._app)
+        # thread = threading.Thread(target=web.run_app, kwargs={"app": self._app, })
+        # print(f"{self.__class__.__name__} started in thread")
+        # thread.start()
+        # thread.join()
 
     # =================================================================================================================
     def apply_config(self, config_filepath=None):

@@ -1,4 +1,4 @@
-# server_templates (v0.0.4)
+# server_templates (v0.0.5)
 
 ## DESCRIPTION_SHORT
 Templates for servers
@@ -39,17 +39,23 @@ See tests and sourcecode for other examples.
 ------------------------------
 ### 1. example1.py
 ```python
-from server_templates import *
+import server_templates
+import pathlib
+from testplans import TpMultyDutBase
+import time
 
 
-# =====================================================================================================================
-if __name__ == "__main__":
-    NEW_CLASS____()
+class Tp(TpMultyDutBase):
+    START_GUI = False
 
 
-# =====================================================================================================================
-
-print(NEW_CLASS____())
+tp = Tp()
+# print(tp.DIRPATH_TCS)
+# print(tp.DIRPATH_TCS.exists())
+# print(pathlib.Path.cwd())
+server = server_templates.ServerAiohttpBase(tp)
+server.start()
+server.join()
 ```
 
 ********************************************************************************
