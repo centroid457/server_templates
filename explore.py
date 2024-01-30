@@ -7,6 +7,7 @@ import time
 # =====================================================================================================================
 class Tp(TpMultyDutBase):
     START_GUI = False
+    START_API = False
 
 
 tp = Tp()
