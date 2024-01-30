@@ -13,7 +13,7 @@ pass
 # =====================================================================================================================
 class ServerAiohttpBase:
     # SETTINGS -----------------------------
-    CONFIG_PATH: pathlib.Path = pathlib.Path(__file__).parent / 'aiohttp_config.yaml'
+    CONFIG_FILEPATH: pathlib.Path = pathlib.Path(__file__).parent / 'aiohttp_config.yaml'
 
     # AUX ----------------------------------
     _app: web.Application
@@ -40,10 +40,10 @@ class ServerAiohttpBase:
         web.run_app(self._app)
 
     # =================================================================================================================
-    def apply_config(self, path=None):
-        path = path or self.CONFIG_PATH
-        if path:
-            with open(path) as f:
+    def apply_config(self, config_filepath=None):
+        config_filepath = config_filepath or self.CONFIG_FILEPATH
+        if config_filepath:
+            with open(config_filepath) as f:
                 config = yaml.safe_load(f)
                 self._app["config"] = config
         print(f"{self._app['config']=}")
@@ -75,7 +75,7 @@ class ServerAiohttpBase:
             msg = msg%{"progress": self.data.progress}
         # print(msg)
         print(11)
-        await asyncio.sleep(3)
+        # await asyncio.sleep(3)
         print(2222)
         return web.Response(text=msg, content_type='text/html')
 
