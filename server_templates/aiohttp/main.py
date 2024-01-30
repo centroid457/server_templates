@@ -16,7 +16,7 @@ pass
 # =====================================================================================================================
 class ServerAiohttpBase(Thread):
     # SETTINGS -----------------------------
-    CONFIG_FILEPATH: pathlib.Path = pathlib.Path(__file__).parent / 'aiohttp_config.yaml'
+    CONFIG_FILEPATH: Union[pathlib.Path, str] = pathlib.Path(__file__).parent / 'aiohttp_config.yaml'
 
     # AUX ----------------------------------
     _app: web.Application
@@ -24,6 +24,8 @@ class ServerAiohttpBase(Thread):
 
     def __init__(self, data: Any = None):
         super().__init__()
+        self.CONFIG_FILEPATH: pathlib.Path = pathlib.Path(self.CONFIG_FILEPATH)
+
         self.data = data
         self._app: web.Application = web.Application()
 
@@ -50,7 +52,7 @@ class ServerAiohttpBase(Thread):
     # =================================================================================================================
     def apply_config(self, config_filepath=None):
         config_filepath = config_filepath or self.CONFIG_FILEPATH
-        if config_filepath:
+        if config_filepath and config_filepath.exists():
             with open(config_filepath) as f:
                 config = yaml.safe_load(f)
                 self._app["config"] = config
