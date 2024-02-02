@@ -1,4 +1,4 @@
 from PROJECT import PROJECT
-from _aux__release_files import update
+from _aux__release_files import release_files_update
 
-update(PROJECT)
+release_files_update(PROJECT)
