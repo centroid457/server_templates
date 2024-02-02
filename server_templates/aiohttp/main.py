@@ -91,14 +91,48 @@ class ServerAiohttpBase(Thread):
         #     self._app.router.add_post(route, response)
 
     # =================================================================================================================
-    def html_pretty_from_any(self, body: Union[str, Dict]) -> str:
-        body_pretty = str(body)
-        if isinstance(body, dict):
-            body_pretty = json.dumps(body, indent=4)
-            # body_html = body_pretty.replace("\n", "<br />\n")     # dont need!
+    def html_create(
+            self,
+            name: str,
+            data: Union[None, str, Dict] = None,
+            redirect_time: Optional[int] = None,
+            redirect_source: Optional[str] = None,
+    ) -> str:
+        data = data or ""
 
-        body_html__space_save = f"<pre>{body_pretty}</pre>"
-        return body_html__space_save
+        # -------------------------------------
+        part_refresh = ""
+        if redirect_time:
+            part_refresh = f"<meta http-equiv='refresh' content='{redirect_time}; url=/' />"
+
+        # -------------------------------------
+        if isinstance(data, str):
+            pass
+
+        elif isinstance(data, dict):
+            data = json.dumps(data, indent=4)
+            # body_html = body_pretty.replace("\n", "<br />\n")     # dont need!
+            data = f"<pre>{data}</pre>"
+
+        else:
+            data = str(data)
+
+        # -------------------------------------
+        result = f"""
+        <!doctype html>
+        <html lang="en-US">
+            <head>
+                <meta charset="utf-8" />
+                <title>{name}</title>
+                {part_refresh}
+            </head>
+            <body>
+                <p><a href="/">HOME</a>/{name}</p>
+                <p>{data}</p>
+            </body>
+        </html>
+        """
+        return result
 
     # =================================================================================================================
     async def response__(self, request):
@@ -107,65 +141,30 @@ class ServerAiohttpBase(Thread):
         if self.data and self.data.progress is not None:
             progress = self.data.progress
         # --------------------------
-        routes_links = ""
+        routes_links = f"[PROGRESS = {progress}%]<br />"
         for route in self._routes_applied:
-            routes_links += f"<a href='{route}'>{route}</a><br />\n"
+            routes_links += f"<a href='{route}'>{route}</a><br />"
 
-        # result -------------------
-        name = "INDEX"
-        msg = f"""
-        <!doctype html>
-        <html lang="en-US">
-            <head>
-                <meta charset="utf-8" />
-                <title>{name}</title>
-                <meta http-equiv="refresh" content="2; url=/" />
-            </head>
-            <body>
-                {name}<br />
-                PROGRESS = {progress}%<br />
-                {routes_links}
-            </body>
-        </html>
-        """
-        return web.Response(text=msg, content_type='text/html')
+        # HTML --------------------------------------------------
+        page_name = "*API_LISTING"
+        html = self.html_create(name=page_name, data=routes_links, redirect_time=2)
+        return web.Response(text=html, content_type='text/html')
 
     async def response__start(self, request):
-        name = "START"
-        msg = f"""
-        <!doctype html>
-        <html lang="en-US">
-            <head>
-                <meta charset="utf-8" />
-                <title>{name}</title>
-                <meta http-equiv="refresh" content="1; url=/" />
-            </head>
-            <body>
-                <p>{name}<a href="/">HOME</a></p>
-            </body>
-        </html>
-        """
-        # print(msg)
         self.data.signal__tp_start.emit()
-        return web.Response(text=msg, content_type='text/html')
+
+        # HTML --------------------------------------------------
+        page_name = "START"
+        html = self.html_create(name=page_name, redirect_time=1)
+        return web.Response(text=html, content_type='text/html')
 
     async def response__stop(self, request):
-        name = "STOP"
-        msg = f"""
-        <!doctype html>
-        <html lang="en-US">
-            <head>
-                <meta charset="utf-8" />
-                <title>{name}</title>
-                <meta http-equiv="refresh" content="1; url=/" />
-            </head>
-            <body>
-                <p>{name}<a href="/">HOME</a></p>
-            </body>
-        </html>
-        """
         self.data.signal__tp_stop.emit()
-        return web.Response(text=msg, content_type='text/html')
+
+        # HTML --------------------------------------------------
+        page_name = "STOP"
+        html = self.html_create(name=page_name, redirect_time=1)
+        return web.Response(text=html, content_type='text/html')
 
     async def response__info_json(self, request):
         body: dict = self.data.info_get()
@@ -176,26 +175,10 @@ class ServerAiohttpBase(Thread):
         """
         this is only for pretty view
         """
-        body: dict = self.data.info_get()
-        body_html = self.html_pretty_from_any(body)
-
-        name = "INFO_HTML"
-        msg = f"""
-        <!doctype html>
-        <html lang="en-US">
-            <head>
-                <meta charset="utf-8" />
-                <title>{name}</title>
-            </head>
-            <body>
-                <p>{name}<a href="/">HOME</a></p>
-                <p>{body_html}</p>
-            </body>
-        </html>
-        """
-        # for key, value in body.items():
-        #     print(f"{key}: {value}")
-        return web.Response(text=msg, content_type='text/html')
+        # HTML --------------------------------------------------
+        page_name = "INFO_HTML"
+        html = self.html_create(name=page_name, data=self.data.info_get())
+        return web.Response(text=html, content_type='text/html')
 
 
 # =====================================================================================================================
