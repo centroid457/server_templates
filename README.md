@@ -1,10 +1,10 @@
-# server_templates (v0.0.7)
+# server_templates (v0.0.8)
 
 ## DESCRIPTION_SHORT
-Templates for servers
+templates for servers
 
 ## DESCRIPTION_LONG
-Designed for keep all servers templates in one place
+designed for keep all servers templates in one place
 
 
 ## Features

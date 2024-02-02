@@ -1,11 +1,13 @@
 from typing import *
+from _aux__release_files import release_files_update
+
+
+# =====================================================================================================================
+VERSION = (0, 0, 3)   # 1/deprecate _VERSION_TEMPLATE from PRJ object +2/place update_prj here in __main__ +3/separate finalize attrs
 
 
 # =====================================================================================================================
 class PROJECT:
-    # AUX --------------------------------------------------
-    _VERSION_TEMPLATE: Tuple[int] = (0, 0, 2)
-
     # AUTHOR -----------------------------------------------
     AUTHOR_NAME: str = "Andrei Starichenko"
     AUTHOR_EMAIL: str = "centroid@mail.ru"
@@ -13,7 +15,6 @@ class PROJECT:
 
     # PROJECT ----------------------------------------------
     NAME_IMPORT: str = "server_templates"
-    NAME_INSTALL: str = NAME_IMPORT.replace("_", "-")
     KEYWORDS: List[str] = [
         "api",
         "api server",
@@ -36,8 +37,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 0, 7)
-    VERSION_STR: str = ".".join(map(str, VERSION))
+    VERSION: Tuple[int, int, int] = (0, 0, 8)
     TODO: List[str] = [
         "..."
     ]
@@ -45,13 +45,18 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "fix start with no config file=second",
+        "use automated setup_routes by listing names response__*",
+        "add response__info_json/+html"
     ]
+
+    # FINALIZE -----------------------------------------------
+    VERSION_STR: str = ".".join(map(str, VERSION))
+    NAME_INSTALL: str = NAME_IMPORT.replace("_", "-")
 
 
 # =====================================================================================================================
 if __name__ == '__main__':
-    pass
+    release_files_update(PROJECT)
 
 
 # =====================================================================================================================

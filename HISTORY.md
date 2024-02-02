@@ -11,6 +11,11 @@
 ********************************************************************************
 ## NEWS
 
+0.0.8 (2024/02/02 15:43:36)
+------------------------------
+- use automated setup_routes by listing names response__*  
+- add response__info_json/+html  
+
 0.0.7 (2024/01/30 13:12:48)
 ------------------------------
 - fix start with no config file=second  
