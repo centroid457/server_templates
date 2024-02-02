@@ -37,7 +37,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 0, 8)
+    VERSION: Tuple[int, int, int] = (0, 0, 9)
     TODO: List[str] = [
         "..."
     ]
@@ -45,8 +45,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "use automated setup_routes by listing names response__*",
-        "add response__info_json/+html"
+        "separate html_create method for full pages",
     ]
 
     # FINALIZE -----------------------------------------------
