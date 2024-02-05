@@ -37,7 +37,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 0, 10)
+    VERSION: Tuple[int, int, int] = (0, 0, 11)
     TODO: List[str] = [
         "..."
     ]
@@ -45,7 +45,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "separate get/post and use _route_groups as dict",
+        "add port number setting",
     ]
 
     # FINALIZE -----------------------------------------------
