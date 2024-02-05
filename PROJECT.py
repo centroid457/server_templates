@@ -45,7 +45,8 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "add port number setting",
+        "clean links for all except GET requests in index",
+        "use json responses for POST",
     ]
 
     # FINALIZE -----------------------------------------------

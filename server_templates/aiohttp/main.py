@@ -137,7 +137,10 @@ class ServerAiohttpBase(Thread):
         for group, names in self._route_groups.items():
             html_block += f"{group.upper()}:<br />"
             for name in names:
-                html_block += f"<a href='{name}'>{name}</a><br />"
+                if group == "get":
+                    html_block += f"<a href='{name}'>{name}</a><br />"
+                else:
+                    html_block += f"{name}<br />"
 
             html_block += f"<br />"
 
@@ -163,14 +166,16 @@ class ServerAiohttpBase(Thread):
         return web.Response(text=html, content_type='text/html')
 
     async def response_post__start(self, request) -> web.Response:
-        return self.response_get__start(request)
+        response = web.json_response(data={})
+        return response
 
     async def response_post__stop(self, request) -> web.Response:
-        return self.response_get__stop(request)
+        response = web.json_response(data={})
+        return response
 
     async def response_get__info_json(self, request) -> web.Response:
         body: dict = self.data.info_get()
-        response = web.json_response(body)
+        response = web.json_response(data=body)
         return response
 
     async def response_get__info_html(self, request) -> web.Response:
