@@ -42,7 +42,7 @@ def decorator__log_request_response(func: Callable[[Type__Self, Type__Request], 
 class ServerAiohttpBase(Thread):
     # SETTINGS -----------------------------
     CONFIG_FILEPATH: Union[pathlib.Path, str] = pathlib.Path(__file__).parent / 'aiohttp_config.yaml'
-    PORT: Optional[int] = 8080  # None==8080/directWeb==80
+    PORT: Optional[int] = 80  # None==8080/directWeb==80
 
     # AUX ----------------------------------
     _ROUTE_FUNC_START_PATTERN: str = "response_%s__"
