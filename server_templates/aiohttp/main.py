@@ -23,9 +23,18 @@ def decorator__log_request_response(func: Callable[[Type__Self, Type__Request], 
     """log request/response
     """
     @functools.wraps(func)
-    async def _wrapper(self, *args, **kwargs):
-        print(f"API access[{self.__class__.__name__}.{func.__name__}()]")
-        return await func(self, *args, **kwargs)
+    async def _wrapper(self, request):
+        # ObjectInfo(request).print()
+
+        response = await func(self, request)
+        # ObjectInfo(response).print()
+
+        print(f"API access[from={request.remote=}/to={request.host=}][{self.__class__.__name__}.{func.__name__}()][{response.status=}]")
+        """
+        API access[request.remote=172.24.128.1/request.host='starichenko']          #MYSELF
+        API access[request.remote=192.168.75.1/request.host='192.168.75.144:80']    #from CoWorker
+        """
+        return response
     return _wrapper
 
 
