@@ -37,7 +37,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 0, 9)
+    VERSION: Tuple[int, int, int] = (0, 0, 10)
     TODO: List[str] = [
         "..."
     ]
@@ -45,7 +45,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "separate html_create method for full pages",
+        "separate get/post and use _route_groups as dict",
     ]
 
     # FINALIZE -----------------------------------------------
