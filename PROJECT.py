@@ -37,7 +37,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 0, 11)
+    VERSION: Tuple[int, int, int] = (0, 0, 12)
     TODO: List[str] = [
         "..."
     ]
