@@ -42,7 +42,7 @@ def decorator__log_request_response(func: Callable[[Type__Self, Type__Request], 
 class ServerAiohttpBase(Thread):
     # SETTINGS -----------------------------
     CONFIG_FILEPATH: Union[pathlib.Path, str] = pathlib.Path(__file__).parent / 'aiohttp_config.yaml'
-    PORT: Optional[int] = 80  # None==8080/directWeb==80
+    PORT: Optional[int] = 8080  # None==8080/directWeb==80
 
     # AUX ----------------------------------
     _ROUTE_FUNC_START_PATTERN: str = "response_%s__"
@@ -110,6 +110,7 @@ class ServerAiohttpBase(Thread):
             data: Union[None, str, Dict] = None,
             redirect_time: Optional[int] = None,
             redirect_source: Optional[str] = None,
+            request: Any = None,
     ) -> str:
         data = data or ""
 
@@ -131,6 +132,11 @@ class ServerAiohttpBase(Thread):
             data = str(data)
 
         # -------------------------------------
+        body_header = f"<a href='/'>HOME</a>/{name}<br />"
+        if request:
+            body_header += f"request from={request.remote=}/to={request.host=}<br />"
+
+        # -------------------------------------
         result = f"""
         <!doctype html>
         <html lang="en-US">
@@ -140,7 +146,7 @@ class ServerAiohttpBase(Thread):
                 {part_refresh}
             </head>
             <body>
-                <p><a href="/">HOME</a>/{name}</p>
+                <p>{body_header}</p>
                 <p>{data}</p>
             </body>
         </html>
@@ -167,8 +173,8 @@ class ServerAiohttpBase(Thread):
             html_block += f"<br />"
 
         # HTML --------------------------------------------------
-        page_name = "*INDEX"
-        html = self.html_create(name=page_name, data=html_block, redirect_time=2)
+        page_name = "*API_INDEX"
+        html = self.html_create(name=page_name, data=html_block, redirect_time=2, request=request)
         return web.Response(text=html, content_type='text/html')
 
     @decorator__log_request_response
@@ -177,7 +183,7 @@ class ServerAiohttpBase(Thread):
 
         # HTML --------------------------------------------------
         page_name = "START"
-        html = self.html_create(name=page_name, redirect_time=1)
+        html = self.html_create(name=page_name, redirect_time=1, request=request)
         return web.Response(text=html, content_type='text/html')
 
     @decorator__log_request_response
@@ -186,7 +192,7 @@ class ServerAiohttpBase(Thread):
 
         # HTML --------------------------------------------------
         page_name = "STOP"
-        html = self.html_create(name=page_name, redirect_time=1)
+        html = self.html_create(name=page_name, redirect_time=1, request=request)
         return web.Response(text=html, content_type='text/html')
 
     @decorator__log_request_response
@@ -213,7 +219,7 @@ class ServerAiohttpBase(Thread):
         """
         # HTML --------------------------------------------------
         page_name = "INFO_HTML"
-        html = self.html_create(name=page_name, data=self.data.info_get())
+        html = self.html_create(name=page_name, data=self.data.info_get(), request=request)
         return web.Response(text=html, content_type='text/html')
 
 
