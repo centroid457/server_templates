@@ -21,6 +21,7 @@ pass
 class ServerAiohttpBase(Thread):
     # SETTINGS -----------------------------
     CONFIG_FILEPATH: Union[pathlib.Path, str] = pathlib.Path(__file__).parent / 'aiohttp_config.yaml'
+    PORT: Optional[int] = 80  # None==8080/directWeb==80
 
     # AUX ----------------------------------
     _ROUTE_FUNC_START_PATTERN: str = "response_%s__"
@@ -43,7 +44,7 @@ class ServerAiohttpBase(Thread):
         self.setup_routes()
         self.apply_config()
 
-        web.run_app(app=self._app)
+        web.run_app(app=self._app, port=self.PORT)
         # thread = threading.Thread(target=web.run_app, kwargs={"app": self._app, })
         # print(f"{self.__class__.__name__} started in thread")
         # thread.start()
