@@ -2,6 +2,7 @@ import pathlib
 import time
 import json
 from typing import *
+import functools
 
 import asyncio
 from aiohttp import web
@@ -14,7 +15,18 @@ from object_info import ObjectInfo
 
 
 # =====================================================================================================================
-pass
+Type__Self = Any
+Type__Request = Any
+
+
+def decorator__log_request_response(func: Callable[[Type__Self, Type__Request], Coroutine[Any, Any, web.Response]]):
+    """log request/response
+    """
+    @functools.wraps(func)
+    async def _wrapper(self, *args, **kwargs):
+        print(f"API access[{self.__class__.__name__}.{func.__name__}()]")
+        return await func(self, *args, **kwargs)
+    return _wrapper
 
 
 # =====================================================================================================================
@@ -127,6 +139,7 @@ class ServerAiohttpBase(Thread):
         return result
 
     # =================================================================================================================
+    # @decorator__log_request_response
     async def response_get__(self, request) -> web.Response:
         # --------------------------
         progress = 0
@@ -149,6 +162,7 @@ class ServerAiohttpBase(Thread):
         html = self.html_create(name=page_name, data=html_block, redirect_time=2)
         return web.Response(text=html, content_type='text/html')
 
+    @decorator__log_request_response
     async def response_get__start(self, request) -> web.Response:
         self.data.signal__tp_start.emit()
 
@@ -157,6 +171,7 @@ class ServerAiohttpBase(Thread):
         html = self.html_create(name=page_name, redirect_time=1)
         return web.Response(text=html, content_type='text/html')
 
+    @decorator__log_request_response
     async def response_get__stop(self, request) -> web.Response:
         self.data.signal__tp_stop.emit()
 
@@ -165,19 +180,24 @@ class ServerAiohttpBase(Thread):
         html = self.html_create(name=page_name, redirect_time=1)
         return web.Response(text=html, content_type='text/html')
 
+    @decorator__log_request_response
     async def response_post__start(self, request) -> web.Response:
+        # return self.response_get__start(request)  # this is will not work!
         response = web.json_response(data={})
         return response
 
+    @decorator__log_request_response
     async def response_post__stop(self, request) -> web.Response:
         response = web.json_response(data={})
         return response
 
+    @decorator__log_request_response
     async def response_get__info_json(self, request) -> web.Response:
         body: dict = self.data.info_get()
         response = web.json_response(data=body)
         return response
 
+    @decorator__log_request_response
     async def response_get__info_html(self, request) -> web.Response:
         """
         this is only for pretty view
