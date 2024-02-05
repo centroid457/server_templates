@@ -126,7 +126,7 @@ class ServerAiohttpBase(Thread):
         return result
 
     # =================================================================================================================
-    async def response_get__(self, request):
+    async def response_get__(self, request) -> web.Response:
         # --------------------------
         progress = 0
         if self.data and self.data.progress is not None:
@@ -145,7 +145,7 @@ class ServerAiohttpBase(Thread):
         html = self.html_create(name=page_name, data=html_block, redirect_time=2)
         return web.Response(text=html, content_type='text/html')
 
-    async def response_get__start(self, request):
+    async def response_get__start(self, request) -> web.Response:
         self.data.signal__tp_start.emit()
 
         # HTML --------------------------------------------------
@@ -153,7 +153,7 @@ class ServerAiohttpBase(Thread):
         html = self.html_create(name=page_name, redirect_time=1)
         return web.Response(text=html, content_type='text/html')
 
-    async def response_get__stop(self, request):
+    async def response_get__stop(self, request) -> web.Response:
         self.data.signal__tp_stop.emit()
 
         # HTML --------------------------------------------------
@@ -161,12 +161,18 @@ class ServerAiohttpBase(Thread):
         html = self.html_create(name=page_name, redirect_time=1)
         return web.Response(text=html, content_type='text/html')
 
-    async def response_get__info_json(self, request):
+    async def response_post__start(self, request) -> web.Response:
+        return self.response_get__start(request)
+
+    async def response_post__stop(self, request) -> web.Response:
+        return self.response_get__stop(request)
+
+    async def response_get__info_json(self, request) -> web.Response:
         body: dict = self.data.info_get()
         response = web.json_response(body)
         return response
 
-    async def response_get__info_html(self, request):
+    async def response_get__info_html(self, request) -> web.Response:
         """
         this is only for pretty view
         """
