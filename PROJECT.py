@@ -37,7 +37,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 1, 0)
+    VERSION: Tuple[int, int, int] = (0, 1, 1)
     TODO: List[str] = [
         "..."
     ]
@@ -45,7 +45,8 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "add decorator__log_request_response",
+        "log remote IP",
+        "log request statuscode",
     ]
 
     # FINALIZE -----------------------------------------------
