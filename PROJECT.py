@@ -37,7 +37,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 0, 12)
+    VERSION: Tuple[int, int, int] = (0, 1, 0)
     TODO: List[str] = [
         "..."
     ]
@@ -45,8 +45,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "clean links for all except GET requests in index",
-        "use json responses for POST",
+        "add decorator__log_request_response",
     ]
 
     # FINALIZE -----------------------------------------------
