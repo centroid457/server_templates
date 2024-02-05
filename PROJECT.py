@@ -37,7 +37,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 1, 1)
+    VERSION: Tuple[int, int, int] = (0, 1, 2)
     TODO: List[str] = [
         "..."
     ]
@@ -45,8 +45,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "log remote IP",
-        "log request statuscode",
+        "add request as parameter into html_create to show ip/host in html"
     ]
 
     # FINALIZE -----------------------------------------------
