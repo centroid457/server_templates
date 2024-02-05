@@ -2,12 +2,14 @@ import pathlib
 import time
 import json
 from typing import *
+
+import asyncio
 from aiohttp import web
 import yaml
 
-import asyncio
 # from PyQt5.QtCore import QThread
 from threading import Thread
+
 from object_info import ObjectInfo
 
 
@@ -21,8 +23,12 @@ class ServerAiohttpBase(Thread):
     CONFIG_FILEPATH: Union[pathlib.Path, str] = pathlib.Path(__file__).parent / 'aiohttp_config.yaml'
 
     # AUX ----------------------------------
+    _ROUTE_FUNC_START_PATTERN: str = "response_%s__"
     _app: web.Application
-    _routes_applied: List[str] = []
+    _route_groups: Dict[str, List[str]] = {
+        "get": [],
+        "post": [],
+    }
     data: Any
 
     def __init__(self, data: Any = None):
@@ -58,37 +64,22 @@ class ServerAiohttpBase(Thread):
 
         # self._app['config']={'postgres': {'user': 'aiohttpdemo_user', 'password': 'aiohttpdemo_pass', 'host': 'localhost', 'port': 5432}}
 
+    # =================================================================================================================
     def setup_routes(self):
-        """
-        RULES:
-        1. USE ONLY GET!!! no need POST/PUT/!
-        """
-        self._routes_applied = []
-        response__startswith = "response__"
         for attr_name in dir(self):
-            if not attr_name.startswith(response__startswith):
-                continue
-            route = f'/{attr_name.replace(response__startswith, "")}'
-            self._routes_applied.append(route)
-            self._app.router.add_get(route, getattr(self, attr_name))
+            for group_name, group_list in self._route_groups.items():
+                group_name_start = self._ROUTE_FUNC_START_PATTERN % group_name
+                if not attr_name.startswith(group_name_start):
+                    continue
 
-        # # ---------------------------------------------------------
-        # ROUTES_GET = {
-        #     '/': self.response__,
-        #     '/start': self.response__start,
-        #     '/stop': self.response__stop,
-        #     '/info': self.response__info,
-        # }
-        # for route, response in ROUTES_GET.items():
-        #     self._app.router.add_get(route, response)
-        #
-        # # ---------------------------------------------------------
-        # ROUTES_POST = {
-        #     '/start': self.response__start,
-        #     '/stop': self.response__stop,
-        # }
-        # for route, response in ROUTES_POST.items():
-        #     self._app.router.add_post(route, response)
+                route_name = f'/{attr_name.replace(group_name_start, "")}'
+                self._route_groups[group_name].append(route_name)
+                if group_name == 'get':
+                    self._app.router.add_get(route_name, getattr(self, attr_name))
+                elif group_name == 'post':
+                    self._app.router.add_post(route_name, getattr(self, attr_name))
+
+        # print(f'{self._route_groups=}')
 
     # =================================================================================================================
     def html_create(
@@ -135,22 +126,26 @@ class ServerAiohttpBase(Thread):
         return result
 
     # =================================================================================================================
-    async def response__(self, request):
+    async def response_get__(self, request):
         # --------------------------
         progress = 0
         if self.data and self.data.progress is not None:
             progress = self.data.progress
         # --------------------------
-        routes_links = f"[PROGRESS = {progress}%]<br />"
-        for route in self._routes_applied:
-            routes_links += f"<a href='{route}'>{route}</a><br />"
+        html_block = f"[PROGRESS = {progress}%]<br /><br />"
+        for group, names in self._route_groups.items():
+            html_block += f"{group.upper()}:<br />"
+            for name in names:
+                html_block += f"<a href='{name}'>{name}</a><br />"
+
+            html_block += f"<br />"
 
         # HTML --------------------------------------------------
-        page_name = "*API_LISTING"
-        html = self.html_create(name=page_name, data=routes_links, redirect_time=2)
+        page_name = "*INDEX"
+        html = self.html_create(name=page_name, data=html_block, redirect_time=2)
         return web.Response(text=html, content_type='text/html')
 
-    async def response__start(self, request):
+    async def response_get__start(self, request):
         self.data.signal__tp_start.emit()
 
         # HTML --------------------------------------------------
@@ -158,7 +153,7 @@ class ServerAiohttpBase(Thread):
         html = self.html_create(name=page_name, redirect_time=1)
         return web.Response(text=html, content_type='text/html')
 
-    async def response__stop(self, request):
+    async def response_get__stop(self, request):
         self.data.signal__tp_stop.emit()
 
         # HTML --------------------------------------------------
@@ -166,12 +161,12 @@ class ServerAiohttpBase(Thread):
         html = self.html_create(name=page_name, redirect_time=1)
         return web.Response(text=html, content_type='text/html')
 
-    async def response__info_json(self, request):
+    async def response_get__info_json(self, request):
         body: dict = self.data.info_get()
         response = web.json_response(body)
         return response
 
-    async def response__info_html(self, request):
+    async def response_get__info_html(self, request):
         """
         this is only for pretty view
         """
