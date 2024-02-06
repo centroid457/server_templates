@@ -1,9 +1,12 @@
 # COMMON ===================
 pytest
 requirements-checker
+object-info
 
 # ========================================
 # SPECIAL FOR THIS PROJECT ---------------
+PyYAML      # yaml
 aiohttp
+PyQt5
 
 # ========================================
