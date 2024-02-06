@@ -8,8 +8,8 @@ import asyncio
 from aiohttp import web
 import yaml
 
-# from PyQt5.QtCore import QThread
-from threading import Thread
+from PyQt5.QtCore import QThread
+# from threading import Thread
 
 from object_info import ObjectInfo
 
@@ -20,8 +20,6 @@ Type__Request = Any
 
 
 def decorator__log_request_response(func: Callable[[Type__Self, Type__Request], Coroutine[Any, Any, web.Response]]):
-    """log request/response
-    """
     @functools.wraps(func)
     async def _wrapper(self, request):
         # ObjectInfo(request).print()
@@ -39,7 +37,7 @@ def decorator__log_request_response(func: Callable[[Type__Self, Type__Request], 
 
 
 # =====================================================================================================================
-class ServerAiohttpBase(Thread):
+class ServerAiohttpBase(QThread):
     # SETTINGS -----------------------------
     CONFIG_FILEPATH: Union[pathlib.Path, str] = pathlib.Path(__file__).parent / 'aiohttp_config.yaml'
     PORT: Optional[int] = 80  # None==8080/directWeb==80
@@ -153,15 +151,8 @@ class ServerAiohttpBase(Thread):
         """
         return result
 
-    # =================================================================================================================
-    # @decorator__log_request_response
-    async def response_get__(self, request) -> web.Response:
-        # --------------------------
-        progress = 0
-        if self.data and self.data.progress is not None:
-            progress = self.data.progress
-        # --------------------------
-        html_block = f"[PROGRESS = {progress}%]<br /><br />"
+    def html_block__api_index(self) -> str:
+        html_block = f""
         for group, names in self._route_groups.items():
             html_block += f"{group.upper()}:<br />"
             for name in names:
@@ -171,6 +162,29 @@ class ServerAiohttpBase(Thread):
                     html_block += f"{name}<br />"
 
             html_block += f"<br />"
+            return html_block
+
+    # =================================================================================================================
+    async def response_get__(self, request) -> web.Response:
+        return await self.response_get__api_index(request)
+
+    async def response_get__api_index(self, request) -> web.Response:
+        # HTML --------------------------------------------------
+        page_name = "API_INDEX"
+        html = self.html_create(name=page_name, data=self.html_block__api_index(), request=request)
+        return web.Response(text=html, content_type='text/html')
+
+
+# =====================================================================================================================
+class ServerAiohttp_Example(ServerAiohttpBase):
+    # @decorator__log_request_response
+    async def response_get__(self, request) -> web.Response:
+        # --------------------------
+        progress = 0
+        if self.data and self.data.progress is not None:
+            progress = self.data.progress
+        # --------------------------
+        html_block = f"[PROGRESS = {progress}%]<br /><br />" + self.html_block__api_index()
 
         # HTML --------------------------------------------------
         page_name = "*API_INDEX"

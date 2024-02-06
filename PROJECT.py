@@ -37,15 +37,16 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 1, 2)
+    VERSION: Tuple[int, int, int] = (0, 1, 3)
     TODO: List[str] = [
-        "..."
+        "add full logger for requests (with time+body) save in file"
     ]
     FIXME: List[str] = [
         "..."
     ]
     NEWS: List[str] = [
-        "add request as parameter into html_create to show ip/host in html"
+        "switch to QTread",
+        "separate ServerAiohttp_Example from BASE"
     ]
 
     # FINALIZE -----------------------------------------------

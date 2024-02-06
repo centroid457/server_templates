@@ -16,7 +16,7 @@ tp = Tp()
 # print(pathlib.Path.cwd())
 server = server_templates.ServerAiohttpBase(tp)
 server.start()
-server.join()
+server.wait()
 
 # for num in range(3):
 #     print(num)

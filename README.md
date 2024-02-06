@@ -38,6 +38,7 @@ See tests and sourcecode for other examples.
 
 ------------------------------
 ### 1. example1.py
+
 ```python
 import server_templates
 import pathlib
