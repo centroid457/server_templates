@@ -187,7 +187,7 @@ class ServerAiohttp_Example(ServerAiohttpBase):
         html_block = f"[PROGRESS = {progress}%]<br /><br />" + self.html_block__api_index()
 
         # HTML --------------------------------------------------
-        page_name = "*API_INDEX"
+        page_name = "API_INDEX"
         html = self.html_create(name=page_name, data=html_block, redirect_time=2, request=request)
         return web.Response(text=html, content_type='text/html')
 
