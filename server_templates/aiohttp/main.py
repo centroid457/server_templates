@@ -162,7 +162,7 @@ class ServerAiohttpBase(QThread):
                     html_block += f"{name}<br />"
 
             html_block += f"<br />"
-            return html_block
+        return html_block
 
     # =================================================================================================================
     async def response_get__(self, request) -> web.Response:

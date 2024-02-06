@@ -37,7 +37,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 1, 3)
+    VERSION: Tuple[int, int, int] = (0, 1, 4)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file"
     ]
@@ -45,8 +45,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "switch to QTread",
-        "separate ServerAiohttp_Example from BASE"
+        "fix html_block__api_index"
     ]
 
     # FINALIZE -----------------------------------------------
