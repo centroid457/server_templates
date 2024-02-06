@@ -1,4 +1,4 @@
-# server_templates (v0.1.2)
+# server_templates (v0.1.3)
 
 ## DESCRIPTION_SHORT
 templates for servers
@@ -38,7 +38,6 @@ See tests and sourcecode for other examples.
 
 ------------------------------
 ### 1. example1.py
-
 ```python
 import server_templates
 import pathlib
