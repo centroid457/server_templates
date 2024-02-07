@@ -172,7 +172,7 @@ class ServerAiohttpBase(QThread):
         return await self.response_get__api_index(request)
 
     async def response_get__api_index(self, request) -> web.Response:
-        # HTML --------------------------------------------------
+        # RESPONSE --------------------------------------------------
         page_name = "API_INDEX"
         html = self.html_create(name=page_name, data=self.html_block__api_index(), request=request)
         return web.Response(text=html, content_type='text/html')
