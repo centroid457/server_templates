@@ -201,10 +201,12 @@ class ServerAiohttpBase(QThread):
     async def _post_json_async(self, url_base: Optional[str] = None, route: Optional[str] = None, data: Optional[dict] = None) -> None:
         # PREPARE ------------------------------------
         url_base = url_base or self.CLIENT_URL_BASE
+        url_base = url_base.rstrip("/")
+
         route = route or ""
-        if not route.startswith("/"):
-            route = f"/{route}"
-        url = f"{url_base}{route}"
+        route = route.lstrip("/")
+
+        url = f"{url_base}/{route}"
         data = data or {}
 
         # WORK ----------------------------------------
