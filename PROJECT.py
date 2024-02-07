@@ -37,7 +37,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 1, 5)
+    VERSION: Tuple[int, int, int] = (0, 1, 6)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file"
     ]
@@ -45,7 +45,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "remove ServerAiohttp_Example to testplans - keep only bare server!"
+        "add post_json",
     ]
 
     # FINALIZE -----------------------------------------------

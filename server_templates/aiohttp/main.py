@@ -6,6 +6,7 @@ import functools
 
 import asyncio
 from aiohttp import web
+import aiohttp
 import yaml
 
 from PyQt5.QtCore import QThread
@@ -17,6 +18,10 @@ from object_info import ObjectInfo
 # =====================================================================================================================
 Type__Self = Any
 Type__Request = Any
+
+
+class Exx__AiohttpSeverStartSameAddress(Exception):
+    pass
 
 
 def decorator__log_request_response(func: Callable[[Type__Self, Type__Request], Coroutine[Any, Any, web.Response]]):
@@ -45,6 +50,8 @@ class ServerAiohttpBase(QThread):
     CONFIG_FILEPATH: Union[pathlib.Path, str] = pathlib.Path(__file__).parent / 'aiohttp_config.yaml'
     PORT: Optional[int] = 80  # None==8080/directWeb==80
 
+    CLIENT_URL_BASE: str = None
+
     # AUX ----------------------------------
     _ROUTE_FUNC_START_PATTERN: str = "response_%s__"
     _app: web.Application
@@ -57,16 +64,20 @@ class ServerAiohttpBase(QThread):
     def __init__(self, data: Any = None):
         super().__init__()
         self.CONFIG_FILEPATH: pathlib.Path = pathlib.Path(self.CONFIG_FILEPATH)
-
         self.data = data
-        self._app: web.Application = web.Application()
 
     # =================================================================================================================
     def run(self) -> None:
-        self.setup_routes()
-        self.apply_config()
+        try:
+            self._app: web.Application = web.Application()
+            self.setup_routes()
+            self.apply_config()
+            web.run_app(app=self._app, port=self.PORT)
+            # this will not catch!!! cause of thread maybe!!!
+        except Exception as exx:
+            msg = f"started same server address"
+            raise Exx__AiohttpSeverStartSameAddress(msg)
 
-        web.run_app(app=self._app, port=self.PORT)
         # thread = threading.Thread(target=web.run_app, kwargs={"app": self._app, })
         # print(f"{self.__class__.__name__} started in thread")
         # thread.start()
@@ -182,6 +193,27 @@ class ServerAiohttpBase(QThread):
     #     # return self.response_get__start(request)  # this is will not work!
     #     response = web.json_response(data={})
     #     return response
+
+    # =================================================================================================================
+    def post_json(self, url_base: Optional[str] = None, route: Optional[str] = None, data: Optional[dict] = None) -> None:
+        asyncio.run(self._post_json_async(url_base=url_base, route=route, data=data))
+
+    async def _post_json_async(self, url_base: Optional[str] = None, route: Optional[str] = None, data: Optional[dict] = None) -> None:
+        # PREPARE ------------------------------------
+        url_base = url_base or self.CLIENT_URL_BASE
+        route = route or ""
+        if not route.startswith("/"):
+            route = f"/{route}"
+        url = f"{url_base}{route}"
+        data = data or {}
+
+        # WORK ----------------------------------------
+        async with aiohttp.ClientSession() as session:
+            await session.post(url=url, data=data)
+            # async with session.post(url='http://starichenko/stop') as response:
+            #     html = await response.text()
+            #     print(html)
+            #     pass
 
 
 # =====================================================================================================================
