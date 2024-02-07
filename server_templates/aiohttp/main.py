@@ -207,7 +207,11 @@ class ServerAiohttpBase(QThread):
         route = route.lstrip("/")
 
         url = f"{url_base}/{route}"
+        url = url.rstrip("/")
+
         data = data or {}
+
+        # print(f"----------------{url=}")
 
         # WORK ----------------------------------------
         async with aiohttp.ClientSession() as session:
