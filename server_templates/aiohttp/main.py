@@ -196,6 +196,13 @@ class ServerAiohttpBase(QThread):
 
     # =================================================================================================================
     def post_json(self, url_base: Optional[str] = None, route: Optional[str] = None, data: Optional[dict] = None) -> None:
+        """
+
+        :param url_base:
+        :param route: dont close by SLASH!!! will not work!
+        :param data:
+        :return:
+        """
         asyncio.run(self._post_json_async(url_base=url_base, route=route, data=data))
 
     async def _post_json_async(self, url_base: Optional[str] = None, route: Optional[str] = None, data: Optional[dict] = None) -> None:
