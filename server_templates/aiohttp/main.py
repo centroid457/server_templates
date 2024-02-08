@@ -195,7 +195,7 @@ class ServerAiohttpBase(QThread):
     #     return response
 
     # =================================================================================================================
-    def post_json(self, url_base: Optional[str] = None, route: Optional[str] = None, data: Optional[dict] = None) -> None:
+    def post__json(self, url_base: Optional[str] = None, route: Optional[str] = None, data: Optional[dict] = None) -> None:
         """
 
         :param url_base:
@@ -203,9 +203,9 @@ class ServerAiohttpBase(QThread):
         :param data:
         :return:
         """
-        asyncio.run(self._post_json_async(url_base=url_base, route=route, data=data))
+        asyncio.run(self._post__json_async(url_base=url_base, route=route, data=data))
 
-    async def _post_json_async(self, url_base: Optional[str] = None, route: Optional[str] = None, data: Optional[dict] = None) -> None:
+    async def _post__json_async(self, url_base: Optional[str] = None, route: Optional[str] = None, data: Optional[dict] = None) -> None:
         # PREPARE ------------------------------------
         url_base = url_base or self.CLIENT_URL_BASE
         url_base = url_base.rstrip("/")
@@ -222,11 +222,16 @@ class ServerAiohttpBase(QThread):
 
         # WORK ----------------------------------------
         async with aiohttp.ClientSession() as session:
-            await session.post(url=url, data=data)
-            # async with session.post(url='http://starichenko/stop') as response:
-            #     html = await response.text()
-            #     print(html)
-            #     pass
-
+            print(f"=" * 50)
+            print(f"=" * 50)
+            print(f"=" * 50)
+            print(f"=" * 50)
+            print(f"CLIENT POST[{url=}/{data=}]")
+            # ObjectInfo(session).print()
+            print(f"=" * 50)
+            async with session.post(url=url, data=data) as response:
+                # here must be appropriate method!!! JSON for POST!!!! TEXT for GET (for post will cause SYSEXIT!!!!)!!!
+                post_body = await response.json()
+                print(f"{post_body=}")
 
 # =====================================================================================================================
