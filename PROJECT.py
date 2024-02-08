@@ -37,16 +37,15 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 1, 8)
+    VERSION: Tuple[int, int, int] = (0, 1, 9)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file",
-        "add logger for client POSTs!"
     ]
     FIXME: List[str] = [
         "..."
     ]
     NEWS: List[str] = [
-        "fix url slashes strip=last",
+        "add logger (print) for client POSTs!",
     ]
 
     # FINALIZE -----------------------------------------------
