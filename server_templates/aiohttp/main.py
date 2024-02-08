@@ -228,10 +228,13 @@ class ServerAiohttpBase(QThread):
             # ObjectInfo(session).print()
             print(f"=" * 50)
 
-            async with session.post(url=url, data=data) as response:
+            async with session.post(url=url, data=data, timeout=1) as response:
                 # ObjectInfo(response).print()
-                print(f"CLIENT POST[{response.status=}/{url=}/{data=}]")
-                print(f"=" * 50)
+                print(f"CLIENT POST[{response.ok=}/{response.status=}/{url=}/{data=}]")
+                # print(f"=" * 50)
+
+                if not response.ok:
+                    return
 
                 # here must be appropriate method!!! JSON for POST!!!! TEXT for GET (for post will cause SYSEXIT!!!!)!!!
                 post_body = await response.json()
