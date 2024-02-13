@@ -31,12 +31,7 @@ def decorator__log_request_response(func: Callable[[Type__Self, Type__Request], 
 
         response = await func(self, request)
         # ObjectInfo(response).print()
-
-        print(f"API access[from={request.remote=}/to={request.host=}][{self.__class__.__name__}.{func.__name__}()][{response.status=}]")
-        """
-        API access[request.remote=172.24.128.1/request.host='starichenko']          #MYSELF
-        API access[request.remote=192.168.75.1/request.host='192.168.75.144:80']    #from CoWorker
-        """
+        # print(f"API access[from={request.remote=}/to={request.host=}][{self.__class__.__name__}.{func.__name__}()][{response.status=}]")
         return response
     return _wrapper
 
@@ -49,8 +44,6 @@ class ServerAiohttpBase(QThread):
     # SETTINGS -----------------------------
     CONFIG_FILEPATH: Union[pathlib.Path, str] = pathlib.Path(__file__).parent / 'aiohttp_config.yaml'
     PORT: Optional[int] = 80  # None==8080/directWeb==80
-
-    CLIENT_URL_BASE: str = None
 
     # AUX ----------------------------------
     _ROUTE_FUNC_START_PATTERN: str = "response_%s__"
@@ -77,11 +70,6 @@ class ServerAiohttpBase(QThread):
         except Exception as exx:
             msg = f"started same server address"
             raise Exx__AiohttpSeverStartSameAddress(msg)
-
-        # thread = threading.Thread(target=web.run_app, kwargs={"app": self._app, })
-        # print(f"{self.__class__.__name__} started in thread")
-        # thread.start()
-        # thread.join()
 
     # =================================================================================================================
     def apply_config(self, config_filepath=None):
@@ -113,9 +101,7 @@ class ServerAiohttpBase(QThread):
                     self._app.router.add_get(route_name_w_slash, getattr(self, attr_name))
                 elif group_name == 'post':
                     self._app.router.add_post(route_name_w_slash, getattr(self, attr_name))
-                    self._app.router.add_get(route_name_w_slash, self.response_post_converted_to_get)
-
-        # print(f'{self._route_groups=}')
+                    self._app.router.add_get(route_name_w_slash, self._response_post_converted_to_get)
 
     # =================================================================================================================
     def html_create(
@@ -177,7 +163,7 @@ class ServerAiohttpBase(QThread):
             html_block += f"<br />"
         return html_block
 
-    async def response_post_converted_to_get(self, request) -> web.Response:
+    async def _response_post_converted_to_get(self, request) -> web.Response:
         route = request.path[1:]
         print(f"{route=}")
         await getattr(self, self._ROUTE_FUNC_START_PATTERN % "post" + route)(request)
