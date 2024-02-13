@@ -37,7 +37,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 1, 11)
+    VERSION: Tuple[int, int, int] = (0, 1, 12)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file",
     ]
@@ -45,7 +45,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "add logger (print) for client POSTs!=fix exx if ROUTE not exists",
+        "add response_post_converted_to_get",
     ]
 
     # FINALIZE -----------------------------------------------
