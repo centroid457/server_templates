@@ -37,7 +37,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 1, 13)
+    VERSION: Tuple[int, int, int] = (0, 1, 14)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file",
     ]
@@ -45,7 +45,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "zero clear not used attrs",
+        "add _response_get_json__converted_to_html",
     ]
 
     # FINALIZE -----------------------------------------------
