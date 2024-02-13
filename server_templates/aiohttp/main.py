@@ -106,12 +106,14 @@ class ServerAiohttpBase(QThread):
                 if not attr_name.startswith(group_name_start):
                     continue
 
-                route_name = f'/{attr_name.replace(group_name_start, "")}'
-                self._route_groups[group_name].append(route_name)
+                route_name_wo_slash = f'{attr_name.replace(group_name_start, "")}'
+                route_name_w_slash = f'/{route_name_wo_slash}'
+                self._route_groups[group_name].append(route_name_w_slash)
                 if group_name == 'get':
-                    self._app.router.add_get(route_name, getattr(self, attr_name))
+                    self._app.router.add_get(route_name_w_slash, getattr(self, attr_name))
                 elif group_name == 'post':
-                    self._app.router.add_post(route_name, getattr(self, attr_name))
+                    self._app.router.add_post(route_name_w_slash, getattr(self, attr_name))
+                    self._app.router.add_get(route_name_w_slash, self.response_post_converted_to_get)
 
         # print(f'{self._route_groups=}')
 
@@ -170,13 +172,19 @@ class ServerAiohttpBase(QThread):
         for group, names in self._route_groups.items():
             html_block += f"{group.upper()}:<br />"
             for name in names:
-                if group == "get":
-                    html_block += f"<a href='{name}'>{name}</a><br />"
-                else:
-                    html_block += f"{name}<br />"
+                html_block += f"<a href='{name}'>{name}</a><br />"
 
             html_block += f"<br />"
         return html_block
+
+    async def response_post_converted_to_get(self, request) -> web.Response:
+        route = request.path[1:]
+        print(f"{route=}")
+        await getattr(self, self._ROUTE_FUNC_START_PATTERN % "post" + route)(request)
+
+        # RESPONSE --------------------------------------------------
+        html = self.html_create(name=route, data="", request=request, redirect_time=1)
+        return web.Response(text=html, content_type='text/html')
 
     # =================================================================================================================
     async def response_get__(self, request) -> web.Response:
@@ -187,58 +195,6 @@ class ServerAiohttpBase(QThread):
         page_name = "API_INDEX"
         html = self.html_create(name=page_name, data=self.html_block__api_index(), request=request)
         return web.Response(text=html, content_type='text/html')
-
-    # @decorator__log_request_response
-    # async def response_post__start(self, request) -> web.Response:
-    #     # return self.response_get__start(request)  # this is will not work!
-    #     response = web.json_response(data={})
-    #     return response
-
-    # =================================================================================================================
-    def post__json(self, url_base: Optional[str] = None, route: Optional[str] = None, data: Optional[dict] = None) -> None:
-        """
-
-        :param url_base:
-        :param route: dont close by SLASH!!! will not work!
-        :param data:
-        :return:
-        """
-        asyncio.run(self._post__json_async(url_base=url_base, route=route, data=data))
-
-    async def _post__json_async(self, url_base: Optional[str] = None, route: Optional[str] = None, data: Optional[dict] = None) -> None:
-        # PREPARE ------------------------------------
-        url_base = url_base or self.CLIENT_URL_BASE
-        url_base = url_base.rstrip("/")
-
-        route = route or ""
-        route = route.lstrip("/")
-
-        url = f"{url_base}/{route}"
-        url = url.rstrip("/")
-
-        data = data or {}
-
-        # print(f"----------------{url=}")
-
-        # WORK ----------------------------------------
-        async with aiohttp.ClientSession() as session:
-            print(f"=" * 50)
-            print(f"=" * 50)
-            print(f"=" * 50)
-            # ObjectInfo(session).print()
-            print(f"=" * 50)
-
-            async with session.post(url=url, data=data, timeout=1) as response:
-                # ObjectInfo(response).print()
-                print(f"CLIENT POST[{response.ok=}/{response.status=}/{url=}/{data=}]")
-                # print(f"=" * 50)
-
-                if not response.ok:
-                    return
-
-                # here must be appropriate method!!! JSON for POST!!!! TEXT for GET (for post will cause SYSEXIT!!!!)!!!
-                post_body = await response.json()
-                print(f"{post_body=}")
 
 
 # =====================================================================================================================
