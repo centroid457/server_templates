@@ -5,6 +5,8 @@ from typing import *
 import functools
 
 import asyncio
+
+import requests
 from aiohttp import web
 import aiohttp
 import yaml
@@ -33,6 +35,7 @@ def decorator__log_request_response(func: Callable[[Type__Self, Type__Request], 
         # ObjectInfo(response).print()
         # print(f"API access[from={request.remote=}/to={request.host=}][{self.__class__.__name__}.{func.__name__}()][{response.status=}]")
         return response
+
     return _wrapper
 
 
@@ -47,9 +50,11 @@ class ServerAiohttpBase(QThread):
 
     # AUX ----------------------------------
     _ROUTE_FUNC_START_PATTERN: str = "response_%s__"
+    _ROUTE_PREFIX_HTML_FOR_JSON: str = "_html__"
     _app: web.Application
     _route_groups: Dict[str, List[str]] = {
-        "get": [],
+        "get_html": [],
+        "get_json": [],
         "post": [],
     }
     data: Any
@@ -97,11 +102,17 @@ class ServerAiohttpBase(QThread):
                 route_name_wo_slash = f'{attr_name.replace(group_name_start, "")}'
                 route_name_w_slash = f'/{route_name_wo_slash}'
                 self._route_groups[group_name].append(route_name_w_slash)
-                if group_name == 'get':
+                if group_name == 'get_html':
                     self._app.router.add_get(route_name_w_slash, getattr(self, attr_name))
+                elif group_name == 'get_json':
+                    self._app.router.add_get(route_name_w_slash, getattr(self, attr_name))
+                    self._app.router.add_get(f"/{self._ROUTE_PREFIX_HTML_FOR_JSON}{route_name_wo_slash}", self._response_get_json__converted_to_html)
+
+                    self._route_groups["get_html"].append(f"/{self._ROUTE_PREFIX_HTML_FOR_JSON}{route_name_wo_slash}")
+
                 elif group_name == 'post':
                     self._app.router.add_post(route_name_w_slash, getattr(self, attr_name))
-                    self._app.router.add_get(route_name_w_slash, self._response_post_converted_to_get)
+                    self._app.router.add_get(route_name_w_slash, self._response_post__converted_to_get)
 
     # =================================================================================================================
     def html_create(
@@ -163,24 +174,44 @@ class ServerAiohttpBase(QThread):
             html_block += f"<br />"
         return html_block
 
-    async def _response_post_converted_to_get(self, request) -> web.Response:
+    # =================================================================================================================
+    async def _response_post__converted_to_get(self, request) -> web.Response:
         route = request.path[1:]
-        print(f"{route=}")
         await getattr(self, self._ROUTE_FUNC_START_PATTERN % "post" + route)(request)
 
         # RESPONSE --------------------------------------------------
         html = self.html_create(name=route, data="", request=request, redirect_time=1)
         return web.Response(text=html, content_type='text/html')
 
-    # =================================================================================================================
-    async def response_get__(self, request) -> web.Response:
-        return await self.response_get__api_index(request)
+    async def _response_get_json__converted_to_html(self, request) -> web.Response:
+        route_json = request.path[1:].replace(self._ROUTE_PREFIX_HTML_FOR_JSON, "")
+        response: requests.Response = await getattr(self, self._ROUTE_FUNC_START_PATTERN % "get_json" + route_json)(request)
+        data_text = response.text   # no json/data here in instance!
+        data_json = json.loads(data_text)
 
-    async def response_get__api_index(self, request) -> web.Response:
+        # RESPONSE --------------------------------------------------
+        html = self.html_create(name=f"{self._ROUTE_PREFIX_HTML_FOR_JSON}{route_json}", data=data_json, request=request)
+        return web.Response(text=html, content_type='text/html')
+
+    # =================================================================================================================
+    async def response_get_html__(self, request) -> web.Response:
+        return await self.response_get_html__api_index(request)
+
+    async def response_get_html__api_index(self, request) -> web.Response:
         # RESPONSE --------------------------------------------------
         page_name = "API_INDEX"
         html = self.html_create(name=page_name, data=self.html_block__api_index(), request=request)
         return web.Response(text=html, content_type='text/html')
+
+    # THIS IS AS HELP COMMENT!
+    # @decorator__log_request_response
+    # async def response_post__start(self, request) -> web.Response:
+    #     # return self.response_get__start(request)  # this is will not work!
+    #     self.data.signal__tp_start.emit()
+    #
+    #     # RESPONSE --------------------------------------------------
+    #     response = web.json_response(data={})
+    #     return response
 
 
 # =====================================================================================================================
