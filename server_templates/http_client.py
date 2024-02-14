@@ -3,13 +3,19 @@ from typing import *
 import requests
 from PyQt5.QtCore import QThread
 from collections import deque
+from enum import Enum, auto
 
 from object_info import ObjectInfo
 
 
 # =====================================================================================================================
-Type_Response = Union[None, requests.Response, requests.ConnectTimeout]
-Type_RequestBody = Union[str, dict]
+Type__Response = Union[None, requests.Response, requests.ConnectTimeout]
+Type__RequestBody = Union[str, dict]
+
+
+class ResponseMethod(Enum):
+    POST = auto()
+    GET = auto()
 
 
 # =====================================================================================================================
@@ -48,8 +54,10 @@ class RequestItem(UrlCreator, QThread):
     RETRY_LIMIT: int = 2
     RETRY_TIMEOUT: float = 0.5
 
+    METHOD: ResponseMethod = ResponseMethod.POST
+
     # AUX ------------------------------------------
-    BODY: Type_RequestBody
+    BODY: Type__RequestBody
     # REQUEST: Optional[requests.Request] = None
     RESPONSE: Optional[requests.Response] = None
     EXX_TIMEOUT: Union[None, requests.ConnectTimeout, Exception] = None
@@ -58,7 +66,7 @@ class RequestItem(UrlCreator, QThread):
     index: int = 0
     TIMESTAMP: float
 
-    def __init__(self, body: Type_RequestBody):
+    def __init__(self, body: Type__RequestBody):
         super().__init__()
         self.__class__.index += 1
         self.BODY = body
@@ -91,7 +99,10 @@ class RequestItem(UrlCreator, QThread):
 
             with requests.Session() as session:
                 try:
-                    response = session.post(url=url, data=self.BODY, timeout=self.TIMEOUT_SEND)
+                    if self.METHOD == ResponseMethod.POST:
+                        response = session.post(url=url, data=self.BODY, timeout=self.TIMEOUT_SEND)
+                    elif self.METHOD == ResponseMethod.GET:
+                        response = session.get(url=url, data=self.BODY, timeout=self.TIMEOUT_SEND)
                     self.RESPONSE = response
                 except Exception as exx:
                     self.EXX_TIMEOUT = exx
@@ -162,7 +173,10 @@ class HttpClientStack(QThread):
             else:
                 time.sleep(1)
 
-    def post(self, body: Optional[dict] = None):
+    def post(self, body: Optional[dict] = None) -> None:    # maybe rename to SEND???
+        """
+        work usually with POST
+        """
         # TODO: add locker???
         body = body or {}
         item = self.REQUEST_CLS(body)
