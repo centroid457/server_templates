@@ -37,15 +37,16 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 1, 14)
+    VERSION: Tuple[int, int, int] = (0, 1, 15)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file",
+        "test aiohttp_server/http_client"
     ]
     FIXME: List[str] = [
         "..."
     ]
     NEWS: List[str] = [
-        "add _response_get_json__converted_to_html",
+        "add http_client.py (move from testplans)",
     ]
 
     # FINALIZE -----------------------------------------------
