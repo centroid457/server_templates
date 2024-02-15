@@ -46,7 +46,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "add client_requests.py (move from testplans)",
+        "add all URL params into RequestItem.__init__",
     ]
 
     # FINALIZE -----------------------------------------------

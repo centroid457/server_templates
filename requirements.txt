@@ -5,8 +5,9 @@ object-info
 
 # ========================================
 # SPECIAL FOR THIS PROJECT ---------------
+PyQt5       # for threads
 PyYAML      # yaml
 aiohttp
-PyQt5
+requests
 
 # ========================================

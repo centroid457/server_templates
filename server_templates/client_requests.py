@@ -24,7 +24,7 @@ class UrlCreator:
     PROTOCOL: str = "http"
     HOST: str = "localhost"
     PORT: int = 80
-    ROUTE: str = "stop123"
+    ROUTE: str = ""
 
     def URL_create(
             self,
@@ -49,6 +49,8 @@ class RequestItem(UrlCreator, QThread):
     You need keep it only to manage results or sent in further time!
 
     So Only ONE REQUESTITEM FOR ONE Request!
+
+    create object and wait result by wait() or connect slot finished
     """
     # SETTINGS -------------------------------------
     START_ON_INIT: bool = None      # DONT DELETE!!! useful for delayed/pending requests
@@ -60,29 +62,44 @@ class RequestItem(UrlCreator, QThread):
     METHOD: ResponseMethod = ResponseMethod.POST
 
     # AUX ------------------------------------------
-    BODY: Type__RequestBody
+    BODY: Optional[Type__RequestBody] = None
     # REQUEST: Optional[requests.Request] = None
     RESPONSE: Optional[requests.Response] = None
     EXCEPTION: Union[None, requests.ConnectTimeout, Exception] = None
 
     attempt_all: int
     attempt_circle: int
-    index: int = 0
+    INDEX: int = 0
     TIMESTAMP: float
 
-    def __init__(self, body: Type__RequestBody):
-        # TODO: add params!!!
-        # TODO: add params!!!
-        # TODO: add params!!!
-        # TODO: add params!!!
-        # TODO: add params!!!
-        # TODO: add params!!!
-        # TODO: add params!!!
-        # TODO: add params!!!
+    def __init__(
+            self,
+            body: Optional[Type__RequestBody] = None,
+            method: Optional[ResponseMethod] = None,
+
+            # url: Optional[str] = None,
+            host: Optional[str] = None,
+            port: Optional[int] = None,
+            route: Optional[str] = None,
+    ):
         super().__init__()
-        self.__class__.index += 1
-        self.index = int(self.__class__.index)
-        self.BODY = body
+
+        if body is not None:
+            self.BODY = body
+        if method is not None:
+            self.METHOD = method
+
+        # if url is None:
+        #     url = self.HOST
+        if host is not None:
+            self.HOST = host
+        if port is not None:
+            self.PORT = port
+        if route is not None:
+            self.ROUTE = route
+
+        self.__class__.INDEX += 1
+        self.INDEX = int(self.__class__.INDEX)
         self.attempt_all = 0
         self.attempt_circle = 0
         self.TIMESTAMP = time.time()
@@ -95,7 +112,7 @@ class RequestItem(UrlCreator, QThread):
         return result
 
     def __str__(self) -> str:
-        return f"[{self.index=}/{self.attempt_all=}/{self.attempt_circle=}/{self.check_success()=}]{self.EXCEPTION=}/{self.RESPONSE=}"
+        return f"[{self.INDEX=}/{self.attempt_all=}/{self.attempt_circle=}/{self.check_success()=}]{self.EXCEPTION=}/{self.RESPONSE=}"
 
     def __repr__(self) -> str:
         return str(self)
