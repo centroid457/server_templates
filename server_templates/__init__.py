@@ -1,3 +1,3 @@
-# from server_templates.aiohttp.main import *
-from server_templates.aiohttp import *
-from server_templates.http_client import *
+# from server_templates.server_aiohttp.main import *
+from server_templates.server_aiohttp import *
+from server_templates.client_requests import *

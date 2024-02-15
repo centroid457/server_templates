@@ -33,7 +33,7 @@ class PROJECT:
         # "feat1",
         # ["feat2", "block1", "block2"],
 
-        "aiohttp",
+        "server_aiohttp",
     ]
 
     # HISTORY -----------------------------------------------
@@ -46,7 +46,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "add http_client.py (move from testplans)",
+        "add client_requests.py (move from testplans)",
     ]
 
     # FINALIZE -----------------------------------------------

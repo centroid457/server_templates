@@ -12,7 +12,6 @@ import aiohttp
 import yaml
 
 from PyQt5.QtCore import QThread
-# from threading import Thread
 
 from object_info import ObjectInfo
 
@@ -50,7 +49,7 @@ class ServerAiohttpBase(QThread):
 
     # AUX ----------------------------------
     _ROUTE_FUNC_START_PATTERN: str = "response_%s__"
-    _ROUTE_PREFIX_HTML_FOR_JSON: str = "_html__"
+    _ROUTE_PREFIX_HTML_FOR_JSON: str = "html__"
     _app: web.Application
     _route_groups: Dict[str, List[str]] = {
         "get_html": [],
