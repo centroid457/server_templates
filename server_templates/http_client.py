@@ -60,7 +60,8 @@ class RequestItem(UrlCreator, QThread):
     BODY: Type__RequestBody
     # REQUEST: Optional[requests.Request] = None
     RESPONSE: Optional[requests.Response] = None
-    EXX_TIMEOUT: Union[None, requests.ConnectTimeout, Exception] = None
+    EXCEPTION: Union[None, requests.ConnectTimeout, Exception] = None
+
     attempt_all: int
     attempt_circle: int
     index: int = 0
@@ -83,7 +84,7 @@ class RequestItem(UrlCreator, QThread):
         return result
 
     def __str__(self) -> str:
-        return f"[{self.index=}/{self.attempt_all=}/{self.attempt_circle=}/{self.check_success()=}]{self.EXX_TIMEOUT=}/{self.RESPONSE=}"
+        return f"[{self.index=}/{self.attempt_all=}/{self.attempt_circle=}/{self.check_success()=}]{self.EXCEPTION=}/{self.RESPONSE=}"
 
     def __repr__(self) -> str:
         return str(self)
@@ -97,6 +98,9 @@ class RequestItem(UrlCreator, QThread):
             self.attempt_circle += 1
             self.attempt_all += 1
 
+            self.RESPONSE = response
+            self.EXCEPTION = exx
+
             with requests.Session() as session:
                 try:
                     if self.METHOD == ResponseMethod.POST:
@@ -105,7 +109,7 @@ class RequestItem(UrlCreator, QThread):
                         response = session.get(url=url, data=self.BODY, timeout=self.TIMEOUT_SEND)
                     self.RESPONSE = response
                 except Exception as exx:
-                    self.EXX_TIMEOUT = exx
+                    self.EXCEPTION = exx
 
             print(self)
             if self.check_success():
