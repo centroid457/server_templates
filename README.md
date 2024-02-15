@@ -1,4 +1,4 @@
-# server_templates (v0.1.15)
+# server_templates (v0.2.1)
 
 ## DESCRIPTION_SHORT
 templates for servers
@@ -8,7 +8,8 @@ designed for keep all servers templates in one place
 
 
 ## Features
-1. aiohttp  
+1. server_aiohttp  
+2. client_requests item+stack  
 
 
 ********************************************************************************

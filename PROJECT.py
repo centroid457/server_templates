@@ -34,10 +34,11 @@ class PROJECT:
         # ["feat2", "block1", "block2"],
 
         "server_aiohttp",
+        "client_requests item+stack",
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 2, 0)
+    VERSION: Tuple[int, int, int] = (0, 2, 1)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file",
     ]
@@ -45,9 +46,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "add all URL params into RequestItem.__init__",
-        "big fix/renames in RequestsStack/RequestItem",
-        "add all tests"
+        "zero fix prints"
     ]
 
     # FINALIZE -----------------------------------------------

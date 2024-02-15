@@ -221,7 +221,10 @@ class RequestsStack(QThread):
             else:
                 time.sleep(1)
 
-        print(f"[OK] stack is empty")
+        if len(self.stack):
+            print(f"[WARN] stack is stopped by some errors")
+        else:
+            print(f"[OK] stack is empty")
 
     def send(self, **kwargs) -> None:    # maybe rename to SEND???
         """
