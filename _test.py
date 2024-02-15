@@ -13,9 +13,8 @@ from server_templates import *
 
 
 # =====================================================================================================================
-# FIXME: CANT SEPARATE TESTS!!!! WORK ONLY BY
-
 class Test__ServerAiohttp:
+    # FIXME: CANT SEPARATE TESTS!!!! WORK ONLY one BY one
     PORT_TEST1: int = 8081
 
     victim = None
@@ -35,7 +34,7 @@ class Test__ServerAiohttp:
     # -----------------------------------------------------------------------------------------------------------------
     def test__ALL(self):
         # PREPARE ==============================================
-        TEST_DATA = {'test_data_key_1': 1}
+        TEST_DATA = {'test_data_key': 1}
 
         class Victim(ServerAiohttpBase):
             PORT = self.PORT_TEST1
@@ -82,7 +81,7 @@ class Test__ServerAiohttp:
         assert response.json() == TEST_DATA
 
         response = requests.get(url=f"http://localhost:{self.victim.PORT}/{self.victim._ROUTE_NAME_PREFIX_HTML_FOR_JSON}test_get_json", timeout=1)
-        assert 'test_data_key_1' in response.text
+        assert 'test_data_key' in response.text
 
         # test__POST ----------------------------------
         response = requests.post(url=f"http://localhost:{self.victim.PORT}/test_post", timeout=1, json=TEST_DATA)

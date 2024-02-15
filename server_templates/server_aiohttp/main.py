@@ -92,11 +92,11 @@ class ServerAiohttpBase(QThread):
         if not self.isRunning():
             super().start()
 
-    def __server_stop_start(self):
+    def ___server_pause(self):
         """
         just as info
         """
-        self._app.shutdown()
+        self._app.shutdown()    # pause server!
         self._app.startup()
 
     # =================================================================================================================
