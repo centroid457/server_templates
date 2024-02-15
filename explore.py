@@ -1,12 +1,15 @@
-import server_templates
+from server_templates import ServerAiohttpBase
 import pathlib
 import time
 
-
 # =====================================================================================================================
-server = server_templates.ServerAiohttpBase()
-server.start()
-server.wait()
+server1 = ServerAiohttpBase()
+server1.start()
+server1.wait()
+
+# server2 = server_templates.ServerAiohttpBase()
+# server2.start()
+# server2.wait()
 
 
 # =====================================================================================================================

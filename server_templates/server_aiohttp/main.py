@@ -41,6 +41,8 @@ def decorator__log_request_response(func: Callable[[Type__Self, Type__Request], 
 # =====================================================================================================================
 class ServerAiohttpBase(QThread):
     """
+    NOTE: some problems withing PYTEST only! you can do any instances in one program!
+
     SEE testplans.TpApi as example
     """
     # SETTINGS -----------------------------
@@ -85,6 +87,16 @@ class ServerAiohttpBase(QThread):
             msg = f"[ERROR]started same server address {exx!r}"
             print(msg)
             raise Exx__AiohttpSeverStartSameAddress(msg)  # DON'T DELETE RAISE! - IT IS VERY NECESSARY/IMPORTANT for tests!
+
+    def start(self, *args):
+        if not self.isRunning():
+            super().start()
+
+    def server_stop(self):
+        """
+        MAYBE IT DOES NOT WORK!!! especially in multy threads
+        """
+        self._app.shutdown()
 
     # =================================================================================================================
     def apply_config(self, config_filepath=None):
@@ -217,7 +229,8 @@ class ServerAiohttpBase(QThread):
     # async def response_post__start(self, request) -> web.Response:
     #     # return self.response_get__start(request)  # this is will not work!
     #     self.data.signal__tp_start.emit()
-    #
+    #     test_data = await request.json()  # dont use
+
     #     # RESPONSE --------------------------------------------------
     #     response = web.json_response(data={})
     #     return response
