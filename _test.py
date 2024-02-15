@@ -90,5 +90,27 @@ class Test__ServerAiohttp:
         assert self.victim.test_data == TEST_DATA
         assert response.json() == TEST_DATA
 
+        # test__404 ----------------------------------
+        response = requests.get(url=f"http://localhost:{self.victim.PORT}/test404", timeout=1)
+        assert not response.ok
+        assert response.status_code == 404
+
+        # test__STOP/START ----------------------------------
+        response = requests.get(url=f"http://localhost:{self.victim.PORT}/", timeout=0.3)
+        assert response.ok
+        assert response.status_code == 200
+
+        self.victim._app.shutdown()
+        try:
+            response = requests.get(url=f"http://localhost:{self.victim.PORT}/", timeout=0.3)
+            assert False
+        except:
+            assert True
+
+        self.victim._app.startup()
+        response = requests.get(url=f"http://localhost:{self.victim.PORT}/", timeout=0.3)
+        assert response.ok
+        assert response.status_code == 200
+
 
 # =====================================================================================================================

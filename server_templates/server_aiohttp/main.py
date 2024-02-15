@@ -92,11 +92,12 @@ class ServerAiohttpBase(QThread):
         if not self.isRunning():
             super().start()
 
-    def server_stop(self):
+    def __server_stop_start(self):
         """
-        MAYBE IT DOES NOT WORK!!! especially in multy threads
+        just as info
         """
         self._app.shutdown()
+        self._app.startup()
 
     # =================================================================================================================
     def apply_config(self, config_filepath=None):
