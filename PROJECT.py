@@ -37,16 +37,17 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 1, 15)
+    VERSION: Tuple[int, int, int] = (0, 2, 0)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file",
-        "test aiohttp_server/http_client"
     ]
     FIXME: List[str] = [
         "..."
     ]
     NEWS: List[str] = [
         "add all URL params into RequestItem.__init__",
+        "big fix/renames in RequestsStack/RequestItem",
+        "add all tests"
     ]
 
     # FINALIZE -----------------------------------------------
