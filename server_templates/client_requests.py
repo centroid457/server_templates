@@ -160,7 +160,7 @@ class RequestItem(UrlCreator, QThread):
 
 
 # =====================================================================================================================
-class HttpClientStack(QThread):
+class RequestsStack(QThread):
     # TODO: save send data
 
     # SETTINGS -------------------------------------
@@ -170,14 +170,16 @@ class HttpClientStack(QThread):
     __stack: deque
     request_last: Optional[RequestItem] = None
 
-    def __init__(self):
+    def __init__(self, request_cls: Optional[Type[REQUEST_CLS]] = None):
         super().__init__()
-        self.__class__.__stack = deque()
+        if request_cls is not None:
+            self.REQUEST_CLS = request_cls
 
-    @classmethod
+        self.__stack = deque()
+
     @property
-    def STACK(cls) -> deque:
-        return cls.__stack
+    def stack(self) -> deque:
+        return self.__stack
 
     # ------------------------------------------------------------------------------------------------
     def start(self, *args):
@@ -190,44 +192,44 @@ class HttpClientStack(QThread):
     # ------------------------------------------------------------------------------------------------
     def run(self):
         stack_attempt = 0
-        while len(self.STACK):
+        while len(self.stack):
             stack_attempt += 1
 
             # NEXT -----------------------------------------
             # change last
             if self.request_last is None or self.request_last.check_success():
                 stack_attempt = 0
-                self.request_last = self.STACK[0]
+                self.request_last = self.stack[0]
 
                 if self.request_last.check_success():
-                    self.STACK.popleft()
+                    self.stack.popleft()
                 continue
 
             # WORK -----------------------------------------
             print()
             print(f"{stack_attempt=}")
-            print(f"len={len(self.STACK)}")
+            print(f"len={len(self.stack)}")
             self.request_last.run()
 
             if self.request_last.check_success():
-                self.STACK.popleft()
+                self.stack.popleft()
                 continue
 
-            print(f"len={len(self.STACK)}/{self.STACK=}")
+            print(f"len={len(self.stack)}/{self.stack=}")
             if stack_attempt == 2:
                 break
             else:
                 time.sleep(1)
 
-    def post(self, body: Optional[dict] = None) -> None:    # maybe rename to SEND???
+        print(f"[OK] stack is empty")
+
+    def send(self, **kwargs) -> None:    # maybe rename to SEND???
         """
         work usually with POST
         """
         # TODO: add locker???
-        body = body or {}
-        item = self.REQUEST_CLS(body)
-        self.STACK.append(item)
-        # print(f"len={len(self.STACK)}")
+        item = self.REQUEST_CLS(**kwargs)
+        self.stack.append(item)
         self.start()
 
 

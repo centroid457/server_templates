@@ -142,10 +142,11 @@ class Test__Client:
         assert victim.URL_create(route="") == "http://host:80/"
         assert victim.URL_create(route="route2") == "http://host:80/route2"
 
+    # -----------------------------------------------------------------------------------------------------------------
     def test__RequestItem(self):
-        # SERVER ==============================================
         TEST_DATA = {'test_data_key': 1}
 
+        # SERVER -------------------------------------
         class Server(ServerAiohttpBase):
             PORT = self.PORT_TEST
             test_data = {}
@@ -185,6 +186,44 @@ class Test__Client:
         victim.wait()
         assert victim.RESPONSE.ok
         assert victim.RESPONSE.json() == TEST_DATA
+
+    # -----------------------------------------------------------------------------------------------------------------
+    def test__RequestsStack(self):
+        TEST_DATA = {'test_data_key': 1}
+
+        # SERVER -------------------------------------
+        class Server(ServerAiohttpBase):
+            PORT = self.PORT_TEST + 1
+            test_data = {}
+
+            async def response_post__test_post(self, request) -> web.Response:
+                self.test_data = await request.json()
+                return web.json_response(data=self.test_data)
+
+            async def response_get_json__test_get_json(self, request) -> web.Response:
+                return web.json_response(data=self.test_data)
+
+        server = Server()
+        server.start()
+
+        # check MANUALLY ----------------------------
+        response = requests.post(url=f"http://localhost:{server.PORT}/test_post", timeout=1, json=TEST_DATA)
+        assert response.json() == TEST_DATA
+
+        # check VICTIM ------------------------------
+        class RequestItem_1(RequestItem):
+            PORT = Server.PORT
+            ROUTE = "test_post"
+
+        class Victim(RequestsStack):
+            REQUEST_CLS = RequestItem_1
+
+        victim = Victim()
+
+        assert server.test_data["test_data_key"] == 1
+        victim.send(body={'test_data_key': 2})
+        victim.wait()
+        assert server.test_data["test_data_key"] == 2
 
 
 # =====================================================================================================================
