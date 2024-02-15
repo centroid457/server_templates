@@ -45,10 +45,13 @@ class UrlCreator:
 
 class RequestItem(UrlCreator, QThread):
     """
-    now its only POST!
+    DONT USE IT AS ONE INSTANCE FOR SEVERAL REQUESTS!!!
+    You need keep it only to manage results or sent in further time!
+
+    So Only ONE REQUESTITEM FOR ONE Request!
     """
     # SETTINGS -------------------------------------
-    START_ON_INIT: bool = None
+    START_ON_INIT: bool = None      # DONT DELETE!!! useful for delayed/pending requests
     TIMEOUT_SEND: float = 1
 
     RETRY_LIMIT: int = 2
@@ -68,12 +71,20 @@ class RequestItem(UrlCreator, QThread):
     TIMESTAMP: float
 
     def __init__(self, body: Type__RequestBody):
+        # TODO: add params!!!
+        # TODO: add params!!!
+        # TODO: add params!!!
+        # TODO: add params!!!
+        # TODO: add params!!!
+        # TODO: add params!!!
+        # TODO: add params!!!
+        # TODO: add params!!!
         super().__init__()
         self.__class__.index += 1
+        self.index = int(self.__class__.index)
         self.BODY = body
         self.attempt_all = 0
         self.attempt_circle = 0
-        self.index = int(self.__class__.index)
         self.TIMESTAMP = time.time()
 
         if self.START_ON_INIT:
@@ -89,7 +100,7 @@ class RequestItem(UrlCreator, QThread):
     def __repr__(self) -> str:
         return str(self)
 
-    def run(self):
+    def run(self) -> None:
         self.attempt_circle = 0
 
         url = self.URL_create()
@@ -104,9 +115,9 @@ class RequestItem(UrlCreator, QThread):
             with requests.Session() as session:
                 try:
                     if self.METHOD == ResponseMethod.POST:
-                        response = session.post(url=url, json=self.BODY, timeout=self.TIMEOUT_SEND)
+                        response = session.post(url=url, json=self.BODY or {}, timeout=self.TIMEOUT_SEND)
                     elif self.METHOD == ResponseMethod.GET:
-                        response = session.get(url=url, data=self.BODY, timeout=self.TIMEOUT_SEND)
+                        response = session.get(url=url, data=self.BODY or "", timeout=self.TIMEOUT_SEND)
                     self.RESPONSE = response
                 except Exception as exx:
                     self.EXCEPTION = exx
@@ -115,11 +126,16 @@ class RequestItem(UrlCreator, QThread):
             if self.check_success():
                 break
 
+    # ---------------------------------------------------------------
+    # DONT USE anything LIKE THIS BELOW!!!
     # def start(self, *args):
     #     if not self.isRunning():
     #         super().start(*args)
-    #
+
     # def post(self, url=None, body=None):
+    #     self.start()
+
+    # def get(self, url=None):  #????
     #     self.start()
 
 

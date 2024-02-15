@@ -143,7 +143,7 @@ class Test__Client:
         assert victim.URL_create(route="route2") == "http://host:80/route2"
 
     def test__RequestItem(self):
-        # PREPARE ==============================================
+        # SERVER ==============================================
         TEST_DATA = {'test_data_key': 1}
 
         class Server(ServerAiohttpBase):
@@ -160,15 +160,28 @@ class Test__Client:
         server = Server()
         server.start()
 
+        # check MANUALLY ----------------------------
         response = requests.post(url=f"http://localhost:{server.PORT}/test_post", timeout=1, json=TEST_DATA)
         assert response.json() == TEST_DATA
 
+        # check VICTIM ------------------------------
         class Victim(RequestItem):
-            PORT: int = self.PORT_TEST
-            ROUTE: str = "test_post"
+            START_ON_INIT = True
+            PORT = self.PORT_TEST
+            ROUTE = "test_post"
 
         victim = Victim(body=TEST_DATA)
-        victim.start()
+        victim.wait()
+        assert victim.RESPONSE.ok
+        assert victim.RESPONSE.json() == TEST_DATA
+
+        class Victim(RequestItem):
+            START_ON_INIT = True
+            PORT = self.PORT_TEST
+            ROUTE = "test_get_json"
+            METHOD = ResponseMethod.GET
+
+        victim = Victim(body=TEST_DATA)
         victim.wait()
         assert victim.RESPONSE.ok
         assert victim.RESPONSE.json() == TEST_DATA
