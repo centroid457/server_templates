@@ -98,13 +98,13 @@ class RequestItem(UrlCreator, QThread):
             self.attempt_circle += 1
             self.attempt_all += 1
 
-            self.RESPONSE = response
-            self.EXCEPTION = exx
+            self.RESPONSE = None
+            self.EXCEPTION = None
 
             with requests.Session() as session:
                 try:
                     if self.METHOD == ResponseMethod.POST:
-                        response = session.post(url=url, data=self.BODY, timeout=self.TIMEOUT_SEND)
+                        response = session.post(url=url, json=self.BODY, timeout=self.TIMEOUT_SEND)
                     elif self.METHOD == ResponseMethod.GET:
                         response = session.get(url=url, data=self.BODY, timeout=self.TIMEOUT_SEND)
                     self.RESPONSE = response
@@ -114,6 +114,13 @@ class RequestItem(UrlCreator, QThread):
             print(self)
             if self.check_success():
                 break
+
+    # def start(self, *args):
+    #     if not self.isRunning():
+    #         super().start(*args)
+    #
+    # def post(self, url=None, body=None):
+    #     self.start()
 
 
 # =====================================================================================================================
