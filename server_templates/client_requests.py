@@ -137,7 +137,7 @@ class RequestItem(UrlCreator, QThread):
                     if self.METHOD == ResponseMethod.POST:
                         response = session.post(url=url, json=self.BODY or {}, timeout=self.TIMEOUT_SEND)
                     elif self.METHOD == ResponseMethod.GET:
-                        response = session.get(url=url, data=self.BODY or "", timeout=self.TIMEOUT_SEND)
+                        response = session.get(url=url, timeout=self.TIMEOUT_SEND)
                     self.RESPONSE = response
                 except Exception as exx:
                     self.EXCEPTION = exx
@@ -161,7 +161,6 @@ class RequestItem(UrlCreator, QThread):
 
 # =====================================================================================================================
 class HttpClientStack(QThread):
-    # TODO: add timestamp
     # TODO: save send data
 
     # SETTINGS -------------------------------------
