@@ -166,7 +166,7 @@ class Test__Client:
         assert response.json() == TEST_DATA
 
         # check VICTIM ------------------------------
-        class Victim(RequestItem):
+        class Victim(Client_RequestItem):
             START_ON_INIT = True
             PORT = self.PORT_TEST
             ROUTE = "test_post"
@@ -176,7 +176,7 @@ class Test__Client:
         assert victim.RESPONSE.ok
         assert victim.RESPONSE.json() == TEST_DATA
 
-        class Victim(RequestItem):
+        class Victim(Client_RequestItem):
             START_ON_INIT = True
             PORT = self.PORT_TEST
             ROUTE = "test_get_json"
@@ -211,12 +211,12 @@ class Test__Client:
         assert response.json() == TEST_DATA
 
         # check VICTIM ------------------------------
-        class RequestItem_1(RequestItem):
+        class ClientRequestItem_1(Client_RequestItem):
             PORT = Server.PORT
             ROUTE = "test_post"
 
-        class Victim(RequestsStack):
-            REQUEST_CLS = RequestItem_1
+        class Victim(Client_RequestsStack):
+            REQUEST_CLS = ClientRequestItem_1
 
         victim = Victim()
 

@@ -38,7 +38,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 2, 1)
+    VERSION: Tuple[int, int, int] = (0, 2, 2)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file",
     ]
@@ -46,7 +46,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "zero fix prints"
+        "zero renames Client_RequestItem/Client_RequestsStack"
     ]
 
     # FINALIZE -----------------------------------------------

@@ -46,7 +46,7 @@ class UrlCreator:
         return url
 
 
-class RequestItem(UrlCreator, QThread):
+class Client_RequestItem(UrlCreator, QThread):
     """
     DONT USE IT AS ONE INSTANCE FOR SEVERAL REQUESTS!!!
     You need keep it only to manage results or sent in further time!
@@ -160,15 +160,15 @@ class RequestItem(UrlCreator, QThread):
 
 
 # =====================================================================================================================
-class RequestsStack(QThread):
+class Client_RequestsStack(QThread):
     # TODO: save send data
 
     # SETTINGS -------------------------------------
-    REQUEST_CLS: Type[RequestItem] = RequestItem
+    REQUEST_CLS: Type[Client_RequestItem] = Client_RequestItem
 
     # AUX ------------------------------------------
     __stack: deque
-    request_last: Optional[RequestItem] = None
+    request_last: Optional[Client_RequestItem] = None
 
     def __init__(self, request_cls: Optional[Type[REQUEST_CLS]] = None):
         super().__init__()
