@@ -38,7 +38,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 2, 2)
+    VERSION: Tuple[int, int, int] = (0, 2, 3)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file",
     ]
@@ -46,7 +46,10 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "zero renames Client_RequestItem/Client_RequestsStack"
+        ["[LINUX]",
+         "zero add explicit localhost for server!",
+         "[thread] try move App into main thread"
+         ]
     ]
 
     # FINALIZE -----------------------------------------------

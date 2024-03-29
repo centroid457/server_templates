@@ -11,6 +11,12 @@
 ********************************************************************************
 ## NEWS
 
+0.2.3 (2024/03/29 09:56:33)
+------------------------------
+- [LINUX]:  
+	- zero add explicit localhost for server!  
+	- [thread] try move App into main thread  
+
 0.2.2 (2024/03/05 18:10:37)
 ------------------------------
 - zero renames Client_RequestItem/Client_RequestsStack  
