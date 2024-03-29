@@ -69,6 +69,10 @@ class ServerAiohttpBase(QThread):
         self.CONFIG_FILEPATH: pathlib.Path = pathlib.Path(self.CONFIG_FILEPATH)
         self.data = data
 
+        self._app: web.Application = web.Application()
+        self.setup_routes()
+        self.apply_config()
+
     # =================================================================================================================
     def run(self) -> None:
         """
@@ -78,10 +82,8 @@ class ServerAiohttpBase(QThread):
         EXCEPTION will not catch from start!!! but will CAUSE SYS_EXIT!!!
         """
         try:
-            self._app: web.Application = web.Application()
-            self.setup_routes()
-            self.apply_config()
-            web.run_app(app=self._app, port=self.PORT)
+            web.run_app(app=self._app, port=self.PORT, host="localhost")
+            # keep localhost! maybe here we have FIXME: PermissionError(13, "error while attempting to bind on address ('::', 80, 0, 0): permission denied")
             # this will not catch!!! cause of thread maybe!!!
         except Exception as exx:
             msg = f"[ERROR]started same server address {exx!r}"
