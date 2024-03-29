@@ -82,8 +82,12 @@ class ServerAiohttpBase(QThread):
         EXCEPTION will not catch from start!!! but will CAUSE SYS_EXIT!!!
         """
         try:
-            web.run_app(app=self._app, port=self.PORT, host="localhost")
-            # keep localhost! maybe here we have FIXME: PermissionError(13, "error while attempting to bind on address ('::', 80, 0, 0): permission denied")
+            web.run_app(app=self._app, port=self.PORT)
+            # NOTE:
+            # 1. dont use parameter host="localhost" - its incorrect! from other host you cant access by IP!!! - if not specified - OK!
+
+            # try FIXME: PermissionError(13, "error while attempting to bind on address ('::', 80, 0, 0): permission denied")
+            #   PermissionError(13, "error while attempting to bind on address ('127.0.0.1', 80): permission denied"
             # this will not catch!!! cause of thread maybe!!!
         except Exception as exx:
             msg = f"[ERROR]started same server address {exx!r}"
