@@ -38,7 +38,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 2, 5)
+    VERSION: Tuple[int, int, int] = (0, 2, 6)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file",
     ]
@@ -46,7 +46,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "[FASTAPI] try add - not worked"
+        "[AIOHTTP] add Exx__LinuxPermition/Exx__AiohttpServerOtherError",
     ]
 
     # FINALIZE -----------------------------------------------
