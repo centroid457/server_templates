@@ -153,6 +153,15 @@ def create_app__FastApi() -> FastAPI:
         """
         return {"name": name, "value2": value2}
 
+    # PATH_LONG ----------------------
+    @app.get("/files/{file_path:path}")
+    async def read_file(file_path: str):
+        """
+        http://localhost:8000/files/hello/123 -> {"file_path":"hello/123"}
+        http://localhost:8000/files//hello/123 -> {"file_path":"/hello/123"}
+        """
+        return {"file_path": file_path}
+
     # ENUM ----------------------
     class Model_Enum(str, Enum):    # important define by both STR+ENUM!!!
         alexnet = "alexnet"
