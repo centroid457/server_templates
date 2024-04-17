@@ -1,25 +1,40 @@
 from typing import *
+from enum import Enum
 from PyQt5.QtCore import QThread
+
+from object_info import ObjectInfo
 
 from fastapi import FastAPI
 import uvicorn
+
+from starlette import status
+from starlette.responses import Response
 
 
 # =====================================================================================================================
 def create_app__FastApi() -> FastAPI:
     app = FastAPI()
 
-    # NOT FOUND ------------------------------------------------
+    # NOT FOUND ------------------------------------------------------
     async def NOT_FOUND():
         pass
         # by default if not specified on any resuets return - {"detail": "Not Found"}
 
-    # CASE_SENSE ------------------------------------------------
+    # ORDER ----------------------------------------------------------
+    @app.get("/order")
+    async def order_1():
+        return "ALWAYS WORK FIRST MATCH!!!"
+
+    @app.get("/order")
+    async def order_2():
+        return "this will work NEVER!!!"
+
+    # CASE_SENSE -----------------------------------------------------
     @app.get("/CASE")
     async def case_sense():
         return "CaseSensitive!!!"
 
-    # SLASHES ------------------------------------------------
+    # SLASHES ---------------------------------------------------------
     # COUNT -----------------
     @app.get("/slash_finish")   # this is another path! '/slash/' and '/slash' - is different!!!
     async def slash_single():
@@ -50,7 +65,7 @@ def create_app__FastApi() -> FastAPI:
     async def slash_no():
         return "slash_no"
 
-    # FUNC_NAMES ------------------------------------------------
+    # FUNC_NAMES ------------------------------------------------------
     @app.get("/1")
     async def same_name():
         return {"same_name": 1}
@@ -59,7 +74,7 @@ def create_app__FastApi() -> FastAPI:
     async def same_name():    # decorator is the unic! name for func is not important!!!
         return {"same_name": 2}
 
-    # TYPES ------------------------------------------------
+    # TYPES -----------------------------------------------------------
     @app.get("/types/str")
     async def types():
         return "str"
@@ -92,14 +107,32 @@ def create_app__FastApi() -> FastAPI:
     async def types():
         return {"key": "value"}
 
-    # PARAMETRIZE------------------------------------------------
-    @app.get("/params/{name}/{value}")  # path item must used! if not - 404=NOT FOUND
-    # def parametrize(name, value=None):  # so never use None!
-    async def params(name, value):
+    @app.get("/types/model")
+    async def types():
+        """
+        You can also return Pydantic models (you'll see more about that later).
+        There are many other objects and models that will be automatically converted to JSON (including ORMs, etc). Try using your favorite ones, it's highly probable that they are already supported.
+        """
+        return "FINISH!!!!" # TODO: FIXME: FINISH!!!
+
+    # PARAMETERS -----------------------------------------------------------
+    # order_matters ----------------------
+    @app.get("/users/fixed")
+    async def order_matters():
+        return {"user_id": "FIXED PATH PLACE FIRST!"}
+
+    @app.get("/users/{as_param}")
+    async def order_matters(as_param: str):
+        return {"user_id": as_param}
+
+    # UNIVERSAL -----------------------------
+    @app.get("/path_params/{name}/{value}")  # path item must used! if not - 404=NOT FOUND
+    # def path_params(name, value=None):  # so never use None!
+    async def path_params(name, value):
         return {"name": name, "value": value}
 
-    @app.get("/params_validate/{name}/{value}")
-    async def params_validate(name: 'str', value: 'int'):
+    @app.get("/path_params__validate_type/{name}/{value}")
+    async def path_params__validate_type(name: 'str', value: 'int'):
         """
         VALIDATION will try to change type
         so
@@ -120,7 +153,23 @@ def create_app__FastApi() -> FastAPI:
         """
         return {"name": name, "value2": value2}
 
-    # QUERY ------------------------------------------------
+    # ENUM ----------------------
+    class Model_Enum(str, Enum):    # important define by both STR+ENUM!!!
+        alexnet = "alexnet"
+        resnet = "resnet"
+        lenet = "lenet"
+
+    @app.get("/path_params__validate_enum/{name_by_enum}")
+    async def path_params__validate_enum(name_by_enum: Model_Enum):
+        if name_by_enum is Model_Enum.alexnet:
+            return {"model_name": name_by_enum, "message": "Deep Learning FTW!"}
+
+        if name_by_enum.value == "lenet":
+            return {"model_name": name_by_enum, "message": "LeCNN all the images"}
+
+        return {"model_name": name_by_enum, "message": "Have some residuals"}
+
+    # QUERY ------------------------------------------------------------------
     @app.get("/query")
     async def query(q: Union['str', None] = None):
         """
@@ -148,7 +197,12 @@ def create_app__FastApi() -> FastAPI:
     async def query_with_param(param: 'int', q: Union['str', None] = None):
         return {"param": param, "q": q}
 
-    # RESULT ------------------------------------------------
+    # POST --------------------------------------------------------------------
+    @app.post("/post/start")
+    async def start():
+        return
+
+    # RESULT ------------------------------------------------------------------
     return app
 
 
@@ -178,9 +232,6 @@ def create_app__APIRouter() -> 'APIRouter':
 
 
 # =====================================================================================================================
-
-
-# =====================================================================================================================
 pass
 pass
 pass
@@ -198,35 +249,42 @@ def start_1__by_terminal(app: FastAPI) -> None:
     pass
 
 
+# =====================================================================================================================
+class ServerFastApi(QThread):
+    """
+    WORK IN LINUX!!!
+    """
+
+    def __init__(self, app: FastAPI, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.app = app
+
+    def run(self):
+        uvicorn.run(self.app, host="0.0.0.0", port=8000)
+
+
 def start_2__by_thread(app: FastAPI) -> Never:
-    class ServerFastApi(QThread):
-        """
-        WORK IN LINUX!!!
-        """
-
-        def __init__(self, app: FastAPI, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            self.app = app
-
-        def run(self):
-            uvicorn.run(self.app, host="0.0.0.0", port=8000)
-
     server = ServerFastApi(app)
     # server.run()
     server.start()
     server.wait()
 
 
+# =====================================================================================================================
 def start_3__by_asyncio(app: FastAPI) -> Never:
     pass
 
     # async uvicorn.run(app, host="0.0.0.0", port=8000)
 
 
-# =====================================================================================================================
-if __name__ == "__main__":
+def main():
     app = create_app__FastApi()
     start_2__by_thread(app)
+
+
+# =====================================================================================================================
+if __name__ == "__main__":
+    main()
 
 
 # =====================================================================================================================
