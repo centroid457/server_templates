@@ -5,6 +5,7 @@ from PyQt5.QtCore import QThread
 from object_info import ObjectInfo
 
 from fastapi import FastAPI
+from pydantic import BaseModel
 import uvicorn
 
 from starlette import status
@@ -196,6 +197,15 @@ def create_app__FastApi() -> FastAPI:
         return {"model_name": name_by_enum, "message": "Have some residuals"}
 
     # QUERY_PARAMS ------------------------------------------------------------------
+    """
+    RIGHT/CORRECT SYNTAX
+        q: str | None = None    - AS BEST IN DOCS!!!
+    
+        q: Union[str, None] = None
+            FastAPI will know that the value of q is not required because of the default value = None. - SEEMS IT BEST! JUST USE "= NONE"!!!
+            The Union in Union[str, None] is not used by FastAPI, but will allow your editor to give you better support and detect errors.
+    """
+
     @app.get("/query_chars")
     async def query(q: Union['str', None] = None):
         """
@@ -297,9 +307,38 @@ def create_app__FastApi() -> FastAPI:
     Sending a body with a GET request has an undefined behavior in the specifications, nevertheless, it is supported by FastAPI, only for very complex/extreme use cases.
     As it is discouraged, the interactive docs with Swagger UI won't show the documentation for the body when using GET, and proxies in the middle might not support it.
     """
-    @app.post("/post/start")
-    async def start():
+
+    # MODEL ---------------------------------
+    class Item(BaseModel):
+        name: str
+        description: str | None = None
+        price: float
+        tax: float | None = None
+
+    @app.post("/post/nobody/start")
+    async def post():
         return
+
+    @app.post("/post/body/")
+    async def post(item: Item):
+        # return item
+
+        item_dict = item.dict()
+        if item.tax:
+            price_with_tax = item.price + item.tax
+            item_dict.update({"price_with_tax": price_with_tax})
+        return item_dict
+
+    @app.post("/post/all_params/{item_id}")
+    async def post(item_id: int, item: Item, q: str | None = None):
+        """
+        RECOGNITION ORDER!
+        The function parameters will be recognized as follows:
+            If the parameter is also declared in the path, it will be used as a path parameter.
+            If the parameter is of a singular type (like int, float, str, bool, etc) it will be interpreted as a query parameter.
+            If the parameter is declared to be of the type of a Pydantic model, it will be interpreted as a request body.
+        """
+        return {"item_id": item_id, **item.dict(), "q": q}
 
     # RESULT ------------------------------------------------------------------
     return app
@@ -307,14 +346,16 @@ def create_app__FastApi() -> FastAPI:
 
 # =====================================================================================================================
 def create_app__APIRouter() -> 'APIRouter':
-    from fastapi import APIRouter
-    from starlette import status
-    from starlette.responses import Response
+    pass
+
+    # from fastapi import APIRouter
+    # from starlette import status
+    # from starlette.responses import Response
 
     # from bot import proceed_release
     # from models import Body, Actions
     #
-    api_router = APIRouter()  # noqa: pylint=invalid-name
+    # api_router = APIRouter()  # noqa: pylint=invalid-name
     #
     # @api_router.post("/release/")
     # async def release(*,
@@ -326,8 +367,8 @@ def create_app__APIRouter() -> 'APIRouter':
     #         res = await proceed_release(body, chat_id)
     #         return Response(status_code=res.status_code)
     #     return Response(status_code=status.HTTP_200_OK)
-
-    return api_router
+    #
+    # return api_router
 
 
 # =====================================================================================================================
