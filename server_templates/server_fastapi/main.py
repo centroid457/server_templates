@@ -75,40 +75,40 @@ def create_app__FastApi() -> FastAPI:
         return {"same_name": 2}
 
     # TYPES -----------------------------------------------------------
-    @app.get("/types/str")
-    async def types():
+    @app.get("/return_types/str")
+    async def return_types():
         return "str"
 
-    @app.get("/types/int")
-    async def types():
+    @app.get("/return_types/int")
+    async def return_types():
         return 123
 
-    @app.get("/types/float")
-    async def types():
+    @app.get("/return_types/float")
+    async def return_types():
         return 111.222
 
-    @app.get("/types/true")
-    async def types():
+    @app.get("/return_types/true")
+    async def return_types():
         return True         # true
 
-    @app.get("/types/false")
-    async def types():
+    @app.get("/return_types/false")
+    async def return_types():
         return False        # false
 
-    @app.get("/types/none")
-    async def types():
+    @app.get("/return_types/none")
+    async def return_types():
         return None         # null
 
-    @app.get("/types/list")
-    async def types():
+    @app.get("/return_types/list")
+    async def return_types():
         return [1,"2",]
 
-    @app.get("/types/dict")
-    async def types():
+    @app.get("/return_types/dict")
+    async def return_types():
         return {"key": "value"}
 
-    @app.get("/types/model")
-    async def types():
+    @app.get("/return_types/model")
+    async def return_types():
         """
         You can also return Pydantic models (you'll see more about that later).
         There are many other objects and models that will be automatically converted to JSON (including ORMs, etc). Try using your favorite ones, it's highly probable that they are already supported.
@@ -155,7 +155,7 @@ def create_app__FastApi() -> FastAPI:
 
     # PATH_LONG ----------------------
     @app.get("/files/{file_path:path}")
-    async def read_file(file_path: str):
+    async def path_long(file_path: str):
         """
         http://localhost:8000/files/hello/123 -> {"file_path":"hello/123"}
         http://localhost:8000/files//hello/123 -> {"file_path":"/hello/123"}
@@ -182,6 +182,9 @@ def create_app__FastApi() -> FastAPI:
     @app.get("/query")
     async def query(q: Union['str', None] = None):
         """
+        QUERY params are all that not parametrizes
+        The query is the set of key-value pairs that go after the ? in a URL, separated by & characters.
+
         FOR BLANC - RETURN NULL
             http://localhost:8000/query?        -> {"q":null}
             http://localhost:8000/query?123     -> {"q":null}
@@ -192,19 +195,63 @@ def create_app__FastApi() -> FastAPI:
 
             http://localhost:8000/query/?q=     -> {"q":""}    # query is not depends on last finishing slash!!!
             http://localhost:8000/query//?q=    -> {"q":""}    # query is not depends on last finishing slash!!!
+
+            http://localhost:8000/query?hello=123 -> {"q":null}     # use not defined query param! - no error!
+
+        try send None
+            http://localhost:8000/query?        -> {"q":null}   # seems only one way is not send any!!!
+            http://localhost:8000/query?q=null  -> {"q":"null"}
+            http://localhost:8000/query?q=none  -> {"q":"none"}
+            http://localhost:8000/query?q=None  -> {"q":"None"}
+
+        quotation marks
+            http://localhost:8000/query?q="none"    -> {"q":"\"none\""}
+            http://localhost:8000/query?q=%22none%22 - past to here by copy from address in brouser!
+
+        simbols
+            http://localhost:8000/query?q=\ /_- =[]{}()<>:;,.*!?@$%^~#CommentFinal -> {"q":"\\ /_- =[]{}()<>:;,.*!?@$%^~"}
         """
         return {"q": q}
 
     @app.get("/query_several")
     async def query(q1: Union['str', None] = None, q2: Union['str', None] = None):
         """
-        http://localhost:8000/query_several?q2=222&q1=111 -> {"q1":"111","q2":"222"}
+            http://localhost:8000/query_several?q2=222&q1=111 -> {"q1":"111","q2":"222"}
+
+        comment - only final!
+            http://localhost:8000/query_several?q1=123#CommentFinal&q2=willNotUsed -> {"q1":"123","q2":null}
+
         """
         return {"q1": q1, "q2": q2}
 
     @app.get("/query/{param}")
-    async def query_with_param(param: 'int', q: Union['str', None] = None):
+    async def query(param: 'int', q: Union['str', None] = None):
         return {"param": param, "q": q}
+
+    @app.get("/query_validate")
+    async def query(q: Union['bool', None] = None):
+        """
+        BOOL - any extended convertation!
+            http://localhost:8000/query_validate            -> {"q":null}
+
+            http://localhost:8000/query_validate?q=1        -> {"q":true}
+
+            http://localhost:8000/query_validate?q=TRUE     -> {"q":true}
+            http://localhost:8000/query_validate?q=True     -> {"q":true}
+            http://localhost:8000/query_validate?q=true     -> {"q":true}
+
+            http://localhost:8000/query_validate?q=Y        -> {"q":true}
+            http://localhost:8000/query_validate?q=Yes      -> {"q":true}
+
+            http://localhost:8000/query_validate?q=ON      -> {"q":true}
+
+            http://localhost:8000/query_validate?q=0        -> {"q":false}
+
+        BOOL WRONG
+            http://localhost:8000/query_validate?q=         -> {"detail":[{"type":"bool_parsing","loc":["query","q"],"msg":"Input should be a valid boolean, ....
+            http://localhost:8000/query_validate?q="yes"
+        """
+        return {"q": q}
 
     # POST --------------------------------------------------------------------
     @app.post("/post/start")
