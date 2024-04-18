@@ -4,7 +4,7 @@ from PyQt5.QtCore import QThread
 
 from object_info import ObjectInfo
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Path, Query
 from pydantic import BaseModel
 import uvicorn
 
@@ -13,6 +13,30 @@ from starlette.responses import Response
 
 
 # =====================================================================================================================
+class DataExample:
+    int = 1
+    float = 1.2
+    str = "string"
+    list = [1, "2"]
+    dict = {1: "2", "22": 11}
+
+
+# =====================================================================================================================
+def create_app__FastApiWithData(data: DataExample = None) -> FastAPI:
+    if data is None:
+        data = DataExample()
+
+    class FastAPIWithData(FastAPI):
+        DATA = data
+
+    app = FastAPIWithData()
+
+    @app.get("/data/{attr}")
+    async def get(attr):
+        return getattr(app.DATA, attr, None)
+
+    return app
+
 def create_app__FastApi() -> FastAPI:
     app = FastAPI()
 
@@ -418,9 +442,9 @@ def start_1__by_terminal(app: FastAPI) -> None:
 
 
 # =====================================================================================================================
-class ServerFastApi(QThread):
+class ServerFastApi_START(QThread):
     """
-    WORK IN LINUX!!!
+    WORK IN both LINUX/Win!!!
     """
 
     def __init__(self, app: FastAPI, *args, **kwargs):
@@ -432,7 +456,7 @@ class ServerFastApi(QThread):
 
 
 def start_2__by_thread(app: FastAPI) -> Never:
-    server = ServerFastApi(app)
+    server = ServerFastApi_START(app)
     # server.run()
     server.start()
     server.wait()
@@ -446,13 +470,29 @@ def start_3__by_asyncio(app: FastAPI) -> Never:
 
 
 def main():
-    app = create_app__FastApi()
+    app = create_app__FastApiWithData()
     start_2__by_thread(app)
+
+
+# =====================================================================================================================
+# class ServerFastApi(FastAPI, QThread):
+#     HOST = "0.0.0.0"
+#     PORT = 8000
+#
+#     DATA = DataExample()
+#
+#     @get("/data/{attr}")    # EXX
+#     def hello(self, attr):
+#         return getattr(self.DATA, attr)
+#
+#     def run(self):
+#         uvicorn.run(self, host=self.HOST, port=self.PORT)
 
 
 # =====================================================================================================================
 if __name__ == "__main__":
     main()
+    # ServerFastApi().run()
 
 
 # =====================================================================================================================
