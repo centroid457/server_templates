@@ -113,22 +113,39 @@ def create_app__FastApi() -> FastAPI:
         You can also return Pydantic models (you'll see more about that later).
         There are many other objects and models that will be automatically converted to JSON (including ORMs, etc). Try using your favorite ones, it's highly probable that they are already supported.
         """
-        return "FINISH!!!!" # TODO: FIXME: FINISH!!!
+        return "FINISH!!!!"     # TODO: FIXME: FINISH!!!
 
-    # PARAMETERS -----------------------------------------------------------
+    # PATH_PARAMS -----------------------------------------------------------
+    # chars ----------------------
+    @app.get("/path_chars/{name}")
+    async def path(name: 'str'):
+        """
+            http://localhost:8000/path_chars/123 -> "123"
+
+            http://localhost:8000/path_chars/111-222!@$%5E*()_-+=.,%3C%3E%7B%7D[]%60~#CommentFinal  -> "111-222!@$^*()_-+=.,<>{}[]`~"
+
+        COMMENTS = only FINAL!
+            http://localhost:8000/path_chars/111-222#CommentFinal/hello     -> "111-222"
+        """
+        return name
+
     # order_matters ----------------------
-    @app.get("/users/fixed")
+    @app.get("/path_param/fixed")
     async def order_matters():
-        return {"user_id": "FIXED PATH PLACE FIRST!"}
+        return {"path_param": "FIXED PATH PLACE FIRST!"}
 
-    @app.get("/users/{as_param}")
+    @app.get("/path_param/{as_param}")
     async def order_matters(as_param: str):
-        return {"user_id": as_param}
+        return {"path_param": as_param}
 
-    # UNIVERSAL -----------------------------
-    @app.get("/path_params/{name}/{value}")  # path item must used! if not - 404=NOT FOUND
+    # UNIVERSAL+NONE_AS_DEFAULT-----------------------------
+    @app.get("/path_param_try_def/{name}/{value}")  # path item must used! if not - 404=NOT FOUND
     # def path_params(name, value=None):  # so never use None!
     async def path_params(name, value):
+        """
+            http://localhost:8000/path_param_try_def/111/       ->{"detail":"Not Found"}
+            http://localhost:8000/path_param_try_def/111/222    ->{"name":"111","value":"222"}
+        """
         return {"name": name, "value": value}
 
     @app.get("/path_params__validate_type/{name}/{value}")
@@ -157,8 +174,8 @@ def create_app__FastApi() -> FastAPI:
     @app.get("/files/{file_path:path}")
     async def path_long(file_path: str):
         """
-        http://localhost:8000/files/hello/123 -> {"file_path":"hello/123"}
-        http://localhost:8000/files//hello/123 -> {"file_path":"/hello/123"}
+            http://localhost:8000/files/hello/123 -> {"file_path":"hello/123"}
+            http://localhost:8000/files//hello/123 -> {"file_path":"/hello/123"}
         """
         return {"file_path": file_path}
 
@@ -178,8 +195,8 @@ def create_app__FastApi() -> FastAPI:
 
         return {"model_name": name_by_enum, "message": "Have some residuals"}
 
-    # QUERY ------------------------------------------------------------------
-    @app.get("/query")
+    # QUERY_PARAMS ------------------------------------------------------------------
+    @app.get("/query_chars")
     async def query(q: Union['str', None] = None):
         """
         QUERY params are all that not parametrizes
@@ -224,12 +241,12 @@ def create_app__FastApi() -> FastAPI:
         """
         return {"q1": q1, "q2": q2}
 
-    @app.get("/query/{param}")
+    @app.get("/query_with_path/{param}")
     async def query(param: 'int', q: Union['str', None] = None):
         return {"param": param, "q": q}
 
     @app.get("/query_validate")
-    async def query(q: Union['bool', None] = None):
+    async def query(q: Union['bool', None] = None, qenum: Model_Enum = None):
         """
         BOOL - any extended convertation!
             http://localhost:8000/query_validate            -> {"q":null}
@@ -253,7 +270,33 @@ def create_app__FastApi() -> FastAPI:
         """
         return {"q": q}
 
-    # POST --------------------------------------------------------------------
+    @app.get("/query_required")
+    async def query(q: 'str'):
+        """
+        when not passed
+            http://localhost:8000/query_required
+                -> {"detail":[{"type":"missing","loc":["query","q"],"msg":"Field required","input":null,"url":"https://errors.pydantic.dev/2.6/v/missing"}]}
+
+        when passed
+            http://localhost:8000/query_required?q=111  -> {"q":"111"}
+        """
+        return {"q": q}
+
+    @app.get("/query_optional")
+    async def query(q: 'str' = None):
+        """
+        its enough to set None + not need notice in Annotation!
+
+            http://localhost:8000/query_optional    -> {"q":null}
+        """
+        return {"q": q}
+
+    # POST ------------------------------------------------------------------------------------------------------------
+    """
+    To send data, you should use one of: POST (the more common), PUT, DELETE or PATCH.
+    Sending a body with a GET request has an undefined behavior in the specifications, nevertheless, it is supported by FastAPI, only for very complex/extreme use cases.
+    As it is discouraged, the interactive docs with Swagger UI won't show the documentation for the body when using GET, and proxies in the middle might not support it.
+    """
     @app.post("/post/start")
     async def start():
         return
