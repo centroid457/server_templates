@@ -4,7 +4,7 @@ from PyQt5.QtCore import QThread
 
 from object_info import ObjectInfo
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from pydantic import BaseModel
 import uvicorn
 
@@ -116,10 +116,19 @@ def create_app__FastApi() -> FastAPI:
         """
         return "FINISH!!!!"     # TODO: FIXME: FINISH!!!
 
+    # PARAMS ----------------------------------------------------------------------------------------------------------
+    # VALIDATION ------------------------
+    @app.get("/validation/")
+    async def read_items(q: Annotated[str | None, Query(max_length=50)] = None):
+        results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
+        if q:
+            results.update({"q": q})
+        return results
+
     # PATH_PARAMS -----------------------------------------------------------
     # chars ----------------------
     @app.get("/path_chars/{name}")
-    async def path(name: 'str'):
+    async def path(name: str):
         """
             http://localhost:8000/path_chars/123 -> "123"
 
@@ -150,7 +159,7 @@ def create_app__FastApi() -> FastAPI:
         return {"name": name, "value": value}
 
     @app.get("/path_params__validate_type/{name}/{value}")
-    async def path_params__validate_type(name: 'str', value: 'int'):
+    async def path_params__validate_type(name: str, value: int):
         """
         VALIDATION will try to change type
         so
@@ -164,7 +173,7 @@ def create_app__FastApi() -> FastAPI:
         return {"name": name, "value": value}
 
     @app.get("/params_validate/{name}/{value2}")
-    async def params_validate__overload(name: 'str', value2: 'str'):
+    async def params_validate__overload(name: str, value2: str):
         """
         OVERLOAD WOULDNOT WORK!!!
         INFO:     127.0.0.1:55128 - "GET /params_validate/hello/wrong HTTP/1.1" 422 Unprocessable Entity
@@ -198,16 +207,20 @@ def create_app__FastApi() -> FastAPI:
 
     # QUERY_PARAMS ------------------------------------------------------------------
     """
-    RIGHT/CORRECT SYNTAX
-        q: str | None = None    - AS BEST IN DOCS!!!
+    OPTIONAL CORRECT SYNTAX
+    ALL YOU NEED IS SET NONE AS DEFAULT VALUE FOR ANY TYPE!!! - Having a default value of any type, including None, makes the parameter optional (not required).
     
-        q: Union[str, None] = None
-            FastAPI will know that the value of q is not required because of the default value = None. - SEEMS IT BEST! JUST USE "= NONE"!!!
-            The Union in Union[str, None] is not used by FastAPI, but will allow your editor to give you better support and detect errors.
+    
+    FastAPI will know that the value of q is not required because of the default value = None. - SEEMS IT BEST! JUST USE "= NONE"!!!
+    The Union in Union[str, None] is not used by FastAPI, but will allow your editor to give you better support and detect errors. - JUST FOR IDE DEBUGGING
+        
+    Union[str, None] (or str | None in Python 3.10)
+        q: str | None = None    - AS BEST IN DOCS!!! for new python!
+        q: Union[str, None] = None  - for old python!
     """
 
     @app.get("/query_chars")
-    async def query(q: Union['str', None] = None):
+    async def query(q: Union[str, None] = None):
         """
         QUERY params are all that not parametrizes
         The query is the set of key-value pairs that go after the ? in a URL, separated by & characters.
@@ -241,7 +254,7 @@ def create_app__FastApi() -> FastAPI:
         return {"q": q}
 
     @app.get("/query_several")
-    async def query(q1: Union['str', None] = None, q2: Union['str', None] = None):
+    async def query(q1: Union[str, None] = None, q2: Union[str, None] = None):
         """
             http://localhost:8000/query_several?q2=222&q1=111 -> {"q1":"111","q2":"222"}
 
@@ -251,12 +264,27 @@ def create_app__FastApi() -> FastAPI:
         """
         return {"q1": q1, "q2": q2}
 
+    @app.get("/query_list")
+    async def query(
+            q: Annotated[Union[list[str], None], Query()] = None,
+            q2: Annotated[list[str], Query()] = ["foo", "bar"],
+    ):
+        """
+        To declare a query parameter with a type of list, you need to explicitly use Query, otherwise it would be interpreted as a request body.
+            http://localhost:8000/query_list?q=1&q=2    -> {"q":["1","2"]}
+            http://localhost:8000/query_list?q=1        -> {"q":["1"]}
+            http://localhost:8000/query_list            -> {"q":null}
+
+            http://localhost:8000/query_list            -> {"q":null,"q2":["foo","bar"]}
+        """
+        return {"q": q, "q2": q2}
+
     @app.get("/query_with_path/{param}")
-    async def query(param: 'int', q: Union['str', None] = None):
+    async def query(param: int, q: Union[str, None] = None):
         return {"param": param, "q": q}
 
     @app.get("/query_validate")
-    async def query(q: Union['bool', None] = None, qenum: Model_Enum = None):
+    async def query(q: Union[bool, None] = None, qenum: Model_Enum = None):
         """
         BOOL - any extended convertation!
             http://localhost:8000/query_validate            -> {"q":null}
@@ -281,7 +309,7 @@ def create_app__FastApi() -> FastAPI:
         return {"q": q}
 
     @app.get("/query_required")
-    async def query(q: 'str'):
+    async def query(q: str):
         """
         when not passed
             http://localhost:8000/query_required
@@ -293,7 +321,7 @@ def create_app__FastApi() -> FastAPI:
         return {"q": q}
 
     @app.get("/query_optional")
-    async def query(q: 'str' = None):
+    async def query(q: str = None):
         """
         its enough to set None + not need notice in Annotation!
 
