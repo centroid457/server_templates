@@ -4,7 +4,7 @@ from PyQt5.QtCore import QThread
 
 from object_info import ObjectInfo
 
-from fastapi import FastAPI, Path, Query
+from fastapi import FastAPI, Path, Query, Body
 from pydantic import BaseModel
 import uvicorn
 
@@ -174,7 +174,7 @@ def create_app__FastApi() -> FastAPI:
 
     # UNIVERSAL+NONE_AS_DEFAULT-----------------------------
     @app.get("/path_param_try_def/{name}/{value}")  # path item must used! if not - 404=NOT FOUND
-    # def path_params(name, value=None):  # so never use None!
+    # def path_params(name, value=None):  # so never use None! -  it would not affect anything!
     async def path_params(name, value):
         """
             http://localhost:8000/path_param_try_def/111/       ->{"detail":"Not Found"}
@@ -360,26 +360,66 @@ def create_app__FastApi() -> FastAPI:
     As it is discouraged, the interactive docs with Swagger UI won't show the documentation for the body when using GET, and proxies in the middle might not support it.
     """
 
-    # MODEL ---------------------------------
+    # MODELS ---------------------------------
     class Item(BaseModel):
         name: str
         description: str | None = None
         price: float
         tax: float | None = None
 
+    class User(BaseModel):
+        username: str
+        full_name: str | None = None
+
     @app.post("/post/nobody/start")
     async def post():
         return
 
-    @app.post("/post/body/")
-    async def post(item: Item):
+    @app.post("/post/body/single/")
+    async def post(item: Item | None = None):
+        """
+        BODY could be Optional!!!
+
+        Expected BODY simple
+            {
+                "name": "Foo",
+                "description": "The pretender",
+                "price": 42.0,
+                # "tax": 3.2
+            }
+        """
         # return item
 
         item_dict = item.dict()
         if item.tax:
             price_with_tax = item.price + item.tax
             item_dict.update({"price_with_tax": price_with_tax})
+
+        if item:
+            item_dict.update({"item": item})
+
         return item_dict
+
+    @app.post("/post/body/multy/")
+    async def post(item: Item | None = None, user: User | None = None, extra_singular: Annotated[int | None, Body()] = None):
+        """
+        Expected BODY as complicated
+            {
+                "item": {
+                    "name": "Foo",
+                    "description": "The pretender",
+                    "price": 42.0,
+                    "tax": 3.2
+                },
+                "user": {
+                    "username": "dave",
+                    "full_name": "Dave Grohl"
+                },
+                "extra_singular": None,
+            }
+        """
+        results = {"item": item, "user": user, "extra_singular": extra_singular}
+        return results
 
     @app.post("/post/all_params/{item_id}")
     async def post(item_id: int, item: Item, q: str | None = None):
