@@ -4,7 +4,9 @@ from PyQt5.QtCore import QThread
 
 from object_info import ObjectInfo
 
-from fastapi import FastAPI, Path, Query, Body
+from fastapi import FastAPI, Path, Query, Body, Response
+from fastapi.responses import JSONResponse, RedirectResponse
+
 from pydantic import BaseModel
 import uvicorn
 
@@ -22,7 +24,7 @@ class DataExample:
 
 
 # =====================================================================================================================
-def create_app__FastApiWithData(data: DataExample = None) -> FastAPI:
+def create_app__FastApi_WithData(data: DataExample = None) -> FastAPI:
     if data is None:
         data = DataExample()
 
@@ -432,6 +434,11 @@ def create_app__FastApi() -> FastAPI:
         """
         return {"item_id": item_id, **item.dict(), "q": q}
 
+    # RESPONSE ----------------------------------------------------------------
+    @app.get("/redirect")
+    async def redirect() -> Response:
+        return RedirectResponse(url="https://ya.ru")    # INFO: 127.0.0.1:61637 - "GET /redirect HTTP/1.1" 307 Temporary Redirect
+
     # RESULT ------------------------------------------------------------------
     return app
 
@@ -510,7 +517,7 @@ def start_3__by_asyncio(app: FastAPI) -> Never:
 
 
 def main():
-    app = create_app__FastApiWithData()
+    app = create_app__FastApi()
     start_2__by_thread(app)
 
 
