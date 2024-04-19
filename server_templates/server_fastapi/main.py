@@ -439,6 +439,13 @@ def create_app__FastApi() -> FastAPI:
     async def redirect() -> Response:
         return RedirectResponse(url="https://ya.ru")    # INFO: 127.0.0.1:61637 - "GET /redirect HTTP/1.1" 307 Temporary Redirect
 
+    @app.get("/json")
+    async def json() -> Response:
+        return JSONResponse(
+            content={"message": "Here's your interdimensional portal."},
+            status_code=200,
+        )
+
     # RESULT ------------------------------------------------------------------
     return app
 
