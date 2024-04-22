@@ -11,6 +11,10 @@
 ********************************************************************************
 ## NEWS
 
+0.2.9 (2024/04/22 12:45:02)
+------------------------------
+- [FastApi] add param data into init ServerFastApi_Thread  
+
 0.2.8 (2024/04/22 12:33:02)
 ------------------------------
 - [FastApi] try move all to one class ServerFastApi_Thread  
