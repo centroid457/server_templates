@@ -20,7 +20,7 @@ class Test__Server_FastApi:
     def setup_class(cls):
         pass
 
-        # server = ServerFastApi_START(create_app__FastApi())
+        # server = ServerFastApi_Thread(create_app__FastApi())
         # server.start()
 
     @classmethod

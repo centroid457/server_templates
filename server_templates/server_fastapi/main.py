@@ -24,23 +24,21 @@ class DataExample:
 
 
 # =====================================================================================================================
-def create_app__FastApi_WithData(data: DataExample = None) -> FastAPI:
+def create_app__FastApi(data: Any = None) -> FastAPI:
+    # UNIVERSAL ------------------------------------------------------
     if data is None:
         data = DataExample()
 
-    class FastAPIWithData(FastAPI):
-        DATA = data
-
-    app = FastAPIWithData()
-
-    @app.get("/data/{attr}")
-    async def get(attr):
-        return getattr(app.DATA, attr, None)
-
-    return app
-
-def create_app__FastApi() -> FastAPI:
     app = FastAPI()
+    app.DATA = data
+
+    # WORK -----------------------------------------------------------
+    pass
+    pass
+    pass
+    pass
+    pass
+    pass
 
     # NOT FOUND ------------------------------------------------------
     async def NOT_FOUND():
@@ -439,6 +437,10 @@ def create_app__FastApi() -> FastAPI:
     async def redirect() -> Response:
         return RedirectResponse(url="https://ya.ru")    # INFO: 127.0.0.1:61637 - "GET /redirect HTTP/1.1" 307 Temporary Redirect
 
+    @app.get("/")
+    async def redirect() -> Response:
+        return RedirectResponse(url="/docs")
+
     @app.get("/json")
     async def json() -> Response:
         return JSONResponse(
@@ -496,21 +498,23 @@ def start_1__by_terminal(app: FastAPI) -> None:
 
 
 # =====================================================================================================================
-class ServerFastApi_START(QThread):
+class ServerFastApi_Thread(QThread):
     """
     WORK IN both LINUX/Win!!!
     """
+    HOST: str = "0.0.0.0"
+    PORT: int = 80
 
     def __init__(self, app: FastAPI, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.app = app
 
     def run(self):
-        uvicorn.run(self.app, host="0.0.0.0", port=8000)
+        uvicorn.run(self.app, host=self.HOST, port=self.PORT)
 
 
 def start_2__by_thread(app: FastAPI) -> Never:
-    server = ServerFastApi_START(app)
+    server = ServerFastApi_Thread(app)
     # server.run()
     server.start()
     server.wait()
@@ -558,7 +562,7 @@ def main():
 #     @classmethod
 #     def add_routs(cls):               # will not create pathes
 #         @cls.app.get("/data/{attr}")
-#         def hello(attr):
+#         async def hello(attr):
 #             return getattr(cls.DATA, attr)
 #
 #     def run(self):
@@ -568,7 +572,7 @@ def main():
 # =====================================================================================================================
 if __name__ == "__main__":
     main()
-    # ServerFastApi().run()
+    # ServerFastApi__Wrong2().run()
 
 
 # =====================================================================================================================
