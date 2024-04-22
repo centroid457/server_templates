@@ -25,7 +25,7 @@ class DataExample:
 
 # =====================================================================================================================
 def create_app__FastApi(data: Any = None) -> FastAPI:
-    # UNIVERSAL ------------------------------------------------------
+    # UNIVERSAL ======================================================
     if data is None:
         data = DataExample()
 
@@ -33,11 +33,18 @@ def create_app__FastApi(data: Any = None) -> FastAPI:
     app.DATA = data
 
     # WORK -----------------------------------------------------------
+    @app.get("/")
+    async def redirect() -> Response:
+        return RedirectResponse(url="/docs")
+
     pass
     pass
     pass
     pass
     pass
+    pass
+
+    # EXAMPLES =======================================================
     pass
 
     # NOT FOUND ------------------------------------------------------
