@@ -40,7 +40,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 2, 7)
+    VERSION: Tuple[int, int, int] = (0, 2, 8)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file",
     ]
@@ -48,7 +48,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "[FastApi] add first variant server",
+        "[FastApi] try move all to one class ServerFastApi_Thread",
     ]
 
     # FINALIZE -----------------------------------------------
