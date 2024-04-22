@@ -529,7 +529,7 @@ def main():
 
 
 # =====================================================================================================================
-# class ServerFastApi(FastAPI, QThread):
+# class ServerFastApi__Wrong1(FastAPI, QThread):
 #     HOST = "0.0.0.0"
 #     PORT = 8000
 #
@@ -538,6 +538,28 @@ def main():
 #     @get("/data/{attr}")    # EXX
 #     def hello(self, attr):
 #         return getattr(self.DATA, attr)
+#
+#     def run(self):
+#         uvicorn.run(self, host=self.HOST, port=self.PORT)
+
+
+# class ServerFastApi__Wrong2(FastAPI, QThread):
+#     HOST = "0.0.0.0"
+#     PORT = 8000
+#
+#     DATA = DataExample()
+#
+#     app = FastAPI()
+#
+#     def __init__(self, *args, **kwargs):
+#         self.add_routs()
+#         super().__init__(*args, **kwargs)
+#
+#     @classmethod
+#     def add_routs(cls):               # will not create pathes
+#         @cls.app.get("/data/{attr}")
+#         def hello(attr):
+#             return getattr(cls.DATA, attr)
 #
 #     def run(self):
 #         uvicorn.run(self, host=self.HOST, port=self.PORT)
