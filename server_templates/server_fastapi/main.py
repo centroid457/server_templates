@@ -24,7 +24,7 @@ class DataExample:
 
 
 # =====================================================================================================================
-def create_app__FastApi(data: Any = None) -> FastAPI:
+def create_app__FastApi(self: Any = None, data: Any = None) -> FastAPI:
     # UNIVERSAL ======================================================
     if data is None:
         data = DataExample()
@@ -512,15 +512,21 @@ class ServerFastApi_Thread(QThread):
     HOST: str = "0.0.0.0"
     PORT: int = 80
 
-    def __init__(self, app: FastAPI, *args, **kwargs):
+    data: Any = None
+    create_app: Callable[[Any], FastAPI] = create_app__FastApi
+
+    def __init__(self, app: FastAPI = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if app is None:
+            app = self.create_app(data=self.data)
         self.app = app
 
     def run(self):
         uvicorn.run(self.app, host=self.HOST, port=self.PORT)
 
 
-def start_2__by_thread(app: FastAPI) -> Never:
+def start_2__by_thread(app: FastAPI = None) -> Never:
     server = ServerFastApi_Thread(app)
     # server.run()
     server.start()
@@ -535,8 +541,7 @@ def start_3__by_asyncio(app: FastAPI) -> Never:
 
 
 def main():
-    app = create_app__FastApi()
-    start_2__by_thread(app)
+    start_2__by_thread()
 
 
 # =====================================================================================================================
