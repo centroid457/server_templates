@@ -515,8 +515,11 @@ class ServerFastApi_Thread(QThread):
     data: Any = None
     create_app: Callable[[Any], FastAPI] = create_app__FastApi
 
-    def __init__(self, app: FastAPI = None, *args, **kwargs):
+    def __init__(self, app: FastAPI = None, data: Any = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if data is not None:
+            self.data = data
 
         if app is None:
             app = self.create_app(data=self.data)
