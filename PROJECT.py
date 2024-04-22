@@ -16,9 +16,9 @@ class PROJECT:
     # PROJECT ----------------------------------------------
     NAME_IMPORT: str = "server_templates"
     KEYWORDS: List[str] = [
-        "api",
-        "api server",
-        "http server",
+        "api", "api server", "http server",
+        "aiohttp",
+        "FastApi",
     ]
     CLASSIFIERS_TOPICS_ADD: List[str] = [
         # "Topic :: Communications",
@@ -33,12 +33,14 @@ class PROJECT:
         # "feat1",
         # ["feat2", "block1", "block2"],
 
-        "server_aiohttp",
+        ["server",
+            "aiohttp (try not to use, as old)", "FastApi (preferred)",
+         ],
         "client_requests item+stack",
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 2, 6)
+    VERSION: Tuple[int, int, int] = (0, 2, 7)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file",
     ]
@@ -46,7 +48,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "[AIOHTTP] add Exx__LinuxPermition/Exx__AiohttpServerOtherError",
+        "[FastApi] add first variant server",
     ]
 
     # FINALIZE -----------------------------------------------
