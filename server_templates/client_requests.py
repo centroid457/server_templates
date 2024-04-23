@@ -59,7 +59,7 @@ class Client_RequestItem(UrlCreator, QThread):
     START_ON_INIT: bool = None      # DONT DELETE!!! useful for delayed/pending requests
     TIMEOUT_SEND: float = 1
 
-    RETRY_LIMIT: int = 2
+    RETRY_LIMIT: int = 1
     RETRY_TIMEOUT: float = 0.5
 
     METHOD: ResponseMethod = ResponseMethod.POST
@@ -165,6 +165,7 @@ class Client_RequestsStack(QThread):
 
     # SETTINGS -------------------------------------
     REQUEST_CLS: Type[Client_RequestItem] = Client_RequestItem
+    ATTEMPT_SEND_LIMIT: int = 1
 
     # AUX ------------------------------------------
     __stack: deque
@@ -216,7 +217,7 @@ class Client_RequestsStack(QThread):
                 continue
 
             print(f"len={len(self.stack)}/{self.stack=}")
-            if stack_attempt == 2:
+            if stack_attempt == self.ATTEMPT_SEND_LIMIT:
                 break
             else:
                 time.sleep(1)
