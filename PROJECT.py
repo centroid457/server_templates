@@ -48,7 +48,11 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "[test server_aiohttp] add skip ReqCheckStr_Os.bool_if__LINUX()",
+
+
+
+
+        "[TestClient] separate Test__RequestItem/Stack",
     ]
 
     # FINALIZE -----------------------------------------------
