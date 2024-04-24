@@ -16,7 +16,7 @@ from server_templates.server_fastapi import ServerFastApi_Thread
 
 
 # =====================================================================================================================
-class Test__Client:
+class Test__RequestItem:
     PORT_TEST: int = 8088
 
     @classmethod
@@ -31,7 +31,7 @@ class Test__Client:
         pass
 
     # -----------------------------------------------------------------------------------------------------------------
-    def test__RequestItem(self):
+    def test__1(self):
         TEST_DATA = {'test_data_key': 1}
 
         # SERVER -------------------------------------
@@ -75,8 +75,24 @@ class Test__Client:
         assert victim.RESPONSE.ok
         assert victim.RESPONSE.json() == TEST_DATA
 
+
+# =====================================================================================================================
+class Test__RequestsStack:
+    PORT_TEST: int = 8088
+
+    @classmethod
+    def setup_class(cls):
+        pass
+
+    @classmethod
+    def teardown_class(cls):
+        pass
+
+    def setup_method(self, method):
+        pass
+
     # -----------------------------------------------------------------------------------------------------------------
-    def test__RequestsStack(self):
+    def test__1(self):
         TEST_DATA = {'value': 1}
 
         # SERVER -------------------------------------
@@ -106,6 +122,29 @@ class Test__Client:
         victim.send(body={'value': 2})
         victim.wait()
         assert server.data.dict.get("value") == 2
+
+    # -----------------------------------------------------------------------------------------------------------------
+    def test__2_noserver(self):
+        TEST_DATA = {'value': 1}
+
+        host_wrong = "host_wrong"
+
+        # check MANUALLY ----------------------------
+        response = requests.post(url=f"http://{host_wrong}:{self.PORT_TEST}/post/dict", timeout=1, json=TEST_DATA)
+        assert not response.ok
+
+        # check VICTIM ------------------------------
+        class ClientRequestItem_1(Client_RequestItem):
+            HOST = host_wrong
+            PORT = self.PORT_TEST
+
+        class Victim(Client_RequestsStack):
+            REQUEST_CLS = ClientRequestItem_1
+
+        victim = Victim()
+
+        victim.send(body={'value': 2})
+        victim.wait()
 
 
 # =====================================================================================================================
