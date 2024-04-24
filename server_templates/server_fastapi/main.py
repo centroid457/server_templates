@@ -4,6 +4,8 @@ from PyQt5.QtCore import QThread
 
 from object_info import ObjectInfo
 
+from server_templates.client_requests import UrlCreator
+
 from fastapi import FastAPI, Path, Query, Body, Response
 from fastapi.responses import JSONResponse, RedirectResponse
 
@@ -518,20 +520,25 @@ class ServerFastApi_Thread(QThread):
     """
     WORK IN both LINUX/Win!!!
     """
-    HOST: str = "0.0.0.0"
+    # HOST: str = "0.0.0.0"     # dont use 0.0.0.0 for FASTAPI!!! use localhost!!!
+    HOST: str = "localhost"
     PORT: int = 80
 
     data: Any = None
     create_app: Callable[[Any], FastAPI] = create_app__FastApi
 
+    @property
+    def ROOT(self) -> str:
+        return UrlCreator().URL_create(host=self.HOST, port=self.PORT)
+
     def __init__(self, app: FastAPI = None, data: Any = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        if data is not None:
-            self.data = data
+        if data is None:
+            data = self.data
 
         if app is None:
-            app = self.create_app(data=self.data)
+            app = self.create_app(data=data)
         self.app = app
         self.data = app.data
 
