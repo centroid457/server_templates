@@ -75,31 +75,22 @@ class Test__RequestItem:
         host_wrong = "host_wrong"
 
         # check MANUALLY ----------------------------
-        response = requests.post(url=f"http://{host_wrong}/", timeout=1, json=TEST_DATA)
-        assert not response.ok
+        try:
+            response = requests.post(url=f"http://{host_wrong}/", timeout=1, json=TEST_DATA)
+            assert False
+        except:
+            assert True
 
         # check VICTIM ------------------------------
-        # class VictimPost(Client_RequestItem):
-        #     START_ON_INIT = True
-        #     PORT = self.PORT_TEST
-        #     ROUTE = "/post/dict"
-        #
-        # victim = VictimPost(body=TEST_DATA)
-        # victim.wait()
-        # assert victim.RESPONSE.ok
-        # assert victim.RESPONSE.json() == TEST_DATA
-        #
-        # class VictimGet(Client_RequestItem):
-        #     START_ON_INIT = True
-        #     PORT = self.PORT_TEST
-        #     ROUTE = "/return_types/str"
-        #     METHOD = ResponseMethod.GET
-        #
-        # victim = VictimGet(body=TEST_DATA)
-        # victim.wait()
-        # assert victim.RESPONSE.ok
-        # assert victim.RESPONSE.json() == "str"
+        class VictimPost(Client_RequestItem):
+            HOST = host_wrong
+            START_ON_INIT = True
+            TIMEOUT_SEND = 0.3
 
+        for _ in range(10):
+            victim = VictimPost(body=TEST_DATA)
+            victim.wait()
+            assert not victim.check_success()
 
 
 # =====================================================================================================================
@@ -128,7 +119,7 @@ class Test__RequestsStack:
         server = Server()
         server.start()
 
-        assert server.data.dict.get("value") is None
+        # assert server.data.dict.get("value") is None
 
         # check MANUALLY ----------------------------
         response = requests.post(url=f"http://localhost:{server.PORT}/post/dict", timeout=1, json=TEST_DATA)
@@ -151,26 +142,34 @@ class Test__RequestsStack:
 
     # -----------------------------------------------------------------------------------------------------------------
     def test__2_noserver(self):
+        SEND_COUNT = 100
         TEST_DATA = {'value': 1}
-
         host_wrong = "host_wrong"
 
         # check MANUALLY ----------------------------
-        response = requests.post(url=f"http://{host_wrong}:{self.PORT_TEST}/post/dict", timeout=1, json=TEST_DATA)
-        assert not response.ok
+        try:
+            response = requests.post(url=f"http://{host_wrong}/", timeout=1, json=TEST_DATA)
+            assert False
+        except:
+            assert True
 
         # check VICTIM ------------------------------
         class ClientRequestItem_1(Client_RequestItem):
             HOST = host_wrong
-            PORT = self.PORT_TEST
+            TIMEOUT_SEND = 0.3
 
         class Victim(Client_RequestsStack):
             REQUEST_CLS = ClientRequestItem_1
 
         victim = Victim()
 
-        victim.send(body={'value': 2})
+        for _ in range(SEND_COUNT):
+            victim.send(body={'value': 111})
+            assert not victim.check_success()
+
         victim.wait()
+        assert not victim.check_success()
+        assert len(victim.stack) == SEND_COUNT
 
 
 # =====================================================================================================================

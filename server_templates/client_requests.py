@@ -36,6 +36,7 @@ class Client_RequestItem(UrlCreator, QThread):
 
     RETRY_LIMIT: int = 1
     RETRY_TIMEOUT: float = 0.5
+    RETRY_COUNT: int
 
     METHOD: ResponseMethod = ResponseMethod.POST
 
@@ -46,7 +47,6 @@ class Client_RequestItem(UrlCreator, QThread):
     EXCEPTION: Union[None, requests.ConnectTimeout, Exception] = None
 
     attempt_all: int
-    attempt_circle: int
     INDEX: int = 0
     TIMESTAMP: float
 
@@ -79,29 +79,31 @@ class Client_RequestItem(UrlCreator, QThread):
         self.__class__.INDEX += 1
         self.INDEX = int(self.__class__.INDEX)
         self.attempt_all = 0
-        self.attempt_circle = 0
+        self.RETRY_COUNT = 0
         self.TIMESTAMP = time.time()
 
         if self.START_ON_INIT:
             self.start()
 
     def check_success(self) -> bool:
-        result = self.RESPONSE is not None and self.RESPONSE.ok
+        result = False
+        if self.RESPONSE is not None:
+            result = self.RESPONSE.ok
         return result
 
     def __str__(self) -> str:
-        return f"[{self.INDEX=}/{self.attempt_all=}/{self.attempt_circle=}/{self.check_success()=}]{self.EXCEPTION=}/{self.RESPONSE=}"
+        return f"[{self.INDEX=}/{self.attempt_all=}/{self.RETRY_COUNT=}/{self.check_success()=}]{self.EXCEPTION=}/{self.RESPONSE=}"
 
     def __repr__(self) -> str:
         return str(self)
 
     def run(self) -> None:
-        self.attempt_circle = 0
+        self.RETRY_COUNT = 0
 
         url = self.URL_create()
 
-        while self.attempt_circle == 0 or self.attempt_circle < self.RETRY_LIMIT:
-            self.attempt_circle += 1
+        while self.RETRY_COUNT == 0 or self.RETRY_COUNT < self.RETRY_LIMIT:
+            self.RETRY_COUNT += 1
             self.attempt_all += 1
 
             self.RESPONSE = None
@@ -110,10 +112,9 @@ class Client_RequestItem(UrlCreator, QThread):
             with requests.Session() as session:
                 try:
                     if self.METHOD == ResponseMethod.POST:
-                        response = session.post(url=url, json=self.BODY or {}, timeout=self.TIMEOUT_SEND)
+                        self.RESPONSE = session.post(url=url, json=self.BODY or {}, timeout=self.TIMEOUT_SEND)
                     elif self.METHOD == ResponseMethod.GET:
-                        response = session.get(url=url, timeout=self.TIMEOUT_SEND)
-                    self.RESPONSE = response
+                        self.RESPONSE = session.get(url=url, timeout=self.TIMEOUT_SEND)
                 except Exception as exx:
                     self.EXCEPTION = exx
 
@@ -210,6 +211,10 @@ class Client_RequestsStack(QThread):
         item = self.REQUEST_CLS(**kwargs)
         self.stack.append(item)
         self.start()
+
+    def check_success(self) -> bool:
+        result = len(self.stack) == 0 and self.request_last.check_success()
+        return result
 
 
 # =====================================================================================================================
