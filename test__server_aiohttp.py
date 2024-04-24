@@ -9,11 +9,14 @@ from typing import *
 from configparser import ConfigParser
 import requests
 
-from server_templates import UrlCreator
-from server_templates import ServerAiohttpBase, web
+from requirements_checker import ReqCheckStr_Os
+
+from server_templates.url import UrlCreator
+from server_templates.server_aiohttp import ServerAiohttpBase, web
 
 
 # =====================================================================================================================
+@pytest.mark.skipif(ReqCheckStr_Os.bool_if__LINUX(), reason="WindowsOnly if start in no main thread")
 class Test__ServerAiohttp:
     # FIXME: CANT SEPARATE TESTS!!!! WORK ONLY one BY one
     PORT_TEST: int = 8081
