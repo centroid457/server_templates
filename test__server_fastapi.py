@@ -22,7 +22,6 @@ class Test__Server_FastApi:
 
         cls.server = ServerFastApi_Thread()
         cls.server.start()
-        time.sleep(1)
 
     @classmethod
     def teardown_class(cls):

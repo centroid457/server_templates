@@ -1,9 +1,9 @@
 from typing import *
 from enum import Enum
 from PyQt5.QtCore import QThread
+import time
 
 from object_info import ObjectInfo
-
 from server_templates.client_requests import UrlCreator
 
 from fastapi import FastAPI, Path, Query, Body, Response
@@ -545,6 +545,9 @@ class ServerFastApi_Thread(QThread):
     def run(self):
         uvicorn.run(self.app, host=self.HOST, port=self.PORT)
 
+    def start(self, *args, **kwargs):
+        super().start()
+        time.sleep(1)
 
 def start_2__by_thread(app: FastAPI = None) -> Never:
     server = ServerFastApi_Thread(app)
