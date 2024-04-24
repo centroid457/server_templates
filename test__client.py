@@ -69,6 +69,38 @@ class Test__RequestItem:
         assert victim.RESPONSE.ok
         assert victim.RESPONSE.json() == "str"
 
+    # -----------------------------------------------------------------------------------------------------------------
+    def test__2_noserver(self):
+        TEST_DATA = {'value': 1}
+        host_wrong = "host_wrong"
+
+        # check MANUALLY ----------------------------
+        response = requests.post(url=f"http://{host_wrong}/", timeout=1, json=TEST_DATA)
+        assert not response.ok
+
+        # check VICTIM ------------------------------
+        # class VictimPost(Client_RequestItem):
+        #     START_ON_INIT = True
+        #     PORT = self.PORT_TEST
+        #     ROUTE = "/post/dict"
+        #
+        # victim = VictimPost(body=TEST_DATA)
+        # victim.wait()
+        # assert victim.RESPONSE.ok
+        # assert victim.RESPONSE.json() == TEST_DATA
+        #
+        # class VictimGet(Client_RequestItem):
+        #     START_ON_INIT = True
+        #     PORT = self.PORT_TEST
+        #     ROUTE = "/return_types/str"
+        #     METHOD = ResponseMethod.GET
+        #
+        # victim = VictimGet(body=TEST_DATA)
+        # victim.wait()
+        # assert victim.RESPONSE.ok
+        # assert victim.RESPONSE.json() == "str"
+
+
 
 # =====================================================================================================================
 class Test__RequestsStack:
