@@ -9,7 +9,7 @@ from typing import *
 from configparser import ConfigParser
 import requests
 
-from server_templates import UrlCreator
+from server_templates.url import UrlCreator
 
 
 # =====================================================================================================================

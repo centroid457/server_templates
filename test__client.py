@@ -9,8 +9,6 @@ from typing import *
 from configparser import ConfigParser
 import requests
 
-# from server_templates import *
-# from . import *
 from server_templates.client_requests import Client_RequestItem, ResponseMethod, Client_RequestsStack
 from server_templates.url import UrlCreator
 from server_templates.server_aiohttp import ServerAiohttpBase, web

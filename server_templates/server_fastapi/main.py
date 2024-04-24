@@ -4,7 +4,7 @@ from PyQt5.QtCore import QThread
 import time
 
 from object_info import ObjectInfo
-from server_templates.client_requests import UrlCreator
+from server_templates.url import UrlCreator
 
 from fastapi import FastAPI, Path, Query, Body, Response
 from fastapi.responses import JSONResponse, RedirectResponse
