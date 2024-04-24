@@ -42,6 +42,9 @@ class UrlCreator:
         if route is None:
             route = self.ROUTE or ""
 
+        while route.startswith("/"):
+            route = route[1:]
+
         url = f"{protocol}://{host}:{port}/{route}"
         return url
 
