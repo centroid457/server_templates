@@ -9,7 +9,8 @@ from typing import *
 from configparser import ConfigParser
 import requests
 
-from server_templates import *
+from server_templates import UrlCreator
+from server_templates import ServerAiohttpBase, web
 
 
 # =====================================================================================================================

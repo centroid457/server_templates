@@ -11,7 +11,7 @@ from typing import *
 from configparser import ConfigParser
 import requests
 
-from server_templates import *
+from server_templates import ServerFastApi_Thread
 
 
 # =====================================================================================================================
