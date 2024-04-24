@@ -89,41 +89,35 @@ class Test__Client:
 
     # -----------------------------------------------------------------------------------------------------------------
     def test__RequestsStack(self):
-        TEST_DATA = {'test_data_key': 1}
+        TEST_DATA = {'value': 1}
 
         # SERVER -------------------------------------
-        class Server(ServerAiohttpBase):
+        class Server(ServerFastApi_Thread):
             PORT = self.PORT_TEST + 1
-            test_data = {}
-
-            async def response_post__test_post(self, request) -> web.Response:
-                self.test_data = await request.json()
-                return web.json_response(data=self.test_data)
-
-            async def response_get_json__test_get_json(self, request) -> web.Response:
-                return web.json_response(data=self.test_data)
 
         server = Server()
         server.start()
 
+        assert server.data.dict.get("value") is None
+
         # check MANUALLY ----------------------------
-        response = requests.post(url=f"http://localhost:{server.PORT}/test_post", timeout=1, json=TEST_DATA)
+        response = requests.post(url=f"http://localhost:{server.PORT}/post/dict", timeout=1, json=TEST_DATA)
         assert response.json() == TEST_DATA
 
         # check VICTIM ------------------------------
         class ClientRequestItem_1(Client_RequestItem):
             PORT = Server.PORT
-            ROUTE = "test_post"
+            ROUTE = "/post/dict"
 
         class Victim(Client_RequestsStack):
             REQUEST_CLS = ClientRequestItem_1
 
         victim = Victim()
 
-        assert server.test_data["test_data_key"] == 1
-        victim.send(body={'test_data_key': 2})
+        assert server.data.dict.get("value") == 1
+        victim.send(body={'value': 2})
         victim.wait()
-        assert server.test_data["test_data_key"] == 2
+        assert server.data.dict.get("value") == 2
 
 
 # =====================================================================================================================
