@@ -25,17 +25,26 @@ class DataExample:
 
 # =====================================================================================================================
 def create_app__FastApi(self: Any = None, data: Any = None) -> FastAPI:
+    class Item(BaseModel):
+        value: int
+
     # UNIVERSAL ======================================================
     if data is None:
         data = DataExample()
 
     app = FastAPI()
-    app.DATA = data
+    app.data = data
 
     # WORK -----------------------------------------------------------
     @app.get("/")
     async def redirect() -> Response:
         return RedirectResponse(url="/docs")
+
+    @app.post("/post/dict")
+    async def post(item: Item):
+        data.dict.update(item)
+        print(data.dict)
+        return item
 
     pass
     pass
@@ -524,6 +533,7 @@ class ServerFastApi_Thread(QThread):
         if app is None:
             app = self.create_app(data=self.data)
         self.app = app
+        self.data = app.data
 
     def run(self):
         uvicorn.run(self.app, host=self.HOST, port=self.PORT)
