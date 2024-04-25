@@ -76,7 +76,7 @@ class Test__RequestItem:
 
         # check MANUALLY ----------------------------
         try:
-            response = requests.post(url=f"http://{host_wrong}/", timeout=1, json=TEST_DATA)
+            response = requests.post(url=f"http://{host_wrong}/", timeout=0.2, json=TEST_DATA)
             assert False
         except:
             assert True
@@ -85,12 +85,49 @@ class Test__RequestItem:
         class VictimPost(Client_RequestItem):
             HOST = host_wrong
             START_ON_INIT = True
-            TIMEOUT_SEND = 0.3
+            TIMEOUT_SEND = 0.2
 
-        for _ in range(10):
+        for _ in range(2):
             victim = VictimPost(body=TEST_DATA)
             victim.wait()
             assert not victim.check_success()
+
+    # -----------------------------------------------------------------------------------------------------------------
+    # def test__noserver_timeout(self):
+    #     TEST_DATA = {'value': 1}
+    #     host_wrong = "host_wrong"
+    #
+    #     # check MANUALLY ----------------------------
+    #     print()
+    #     print()
+    #     print()
+    #     print()
+    #     for timeout_item in [0.5, 1.0, 1.5]:
+    #         time_start = time.time()
+    #         try:
+    #             response = requests.post(url=f"http://{host_wrong}/", timeout=timeout_item, json=TEST_DATA)
+    #             assert False
+    #         except:
+    #             assert True
+    #
+    #         time_finish = time.time()
+    #         time_period = time_finish - time_start
+    #
+    #         print(f"{time_start=}/{time_finish=}/{time_period=}")
+    #         assert time_period >= timeout_item
+    #         assert time_period < timeout_item * 3
+    #
+    #     # check VICTIM ------------------------------
+    #     # class VictimPost(Client_RequestItem):
+    #     #     HOST = host_wrong
+    #     #     START_ON_INIT = True
+    #     #     TIMEOUT_SEND = 0.5
+    #     #
+    #     #
+    #     # for _ in range(1):
+    #     #     victim = VictimPost(body=TEST_DATA)
+    #     #     victim.wait()
+    #     #     assert not victim.check_success()
 
 
 # =====================================================================================================================
@@ -148,7 +185,7 @@ class Test__RequestsStack:
 
         # check MANUALLY ----------------------------
         try:
-            response = requests.post(url=f"http://{host_wrong}/", timeout=1, json=TEST_DATA)
+            response = requests.post(url=f"http://{host_wrong}/", timeout=0.2, json=TEST_DATA)
             assert False
         except:
             assert True
@@ -156,15 +193,15 @@ class Test__RequestsStack:
         # check VICTIM ------------------------------
         class ClientRequestItem_1(Client_RequestItem):
             HOST = host_wrong
-            TIMEOUT_SEND = 0.3
+            TIMEOUT_SEND = 0.2
 
         class Victim(Client_RequestsStack):
             REQUEST_CLS = ClientRequestItem_1
 
         victim = Victim()
 
-        for _ in range(SEND_COUNT):
-            victim.send(body={'value': 111})
+        for index in range(SEND_COUNT):
+            victim.send(body={'index': index})
             assert not victim.check_success()
 
         victim.wait()

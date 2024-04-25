@@ -29,6 +29,9 @@ class Client_RequestItem(UrlCreator, QThread):
     So Only ONE REQUESTITEM FOR ONE Request!
 
     create object and wait result by wait() or connect slot finished
+
+    :param TIMEOUT_SEND: be careful! it is not so clear! timeout for connection is basically 3 sec!
+
     """
     # SETTINGS -------------------------------------
     START_ON_INIT: bool = None      # DONT DELETE!!! useful for delayed/pending requests
@@ -36,19 +39,19 @@ class Client_RequestItem(UrlCreator, QThread):
 
     RETRY_LIMIT: int = 1
     RETRY_TIMEOUT: float = 0.5
-    RETRY_COUNT: int
+    retry_index: int = 0
 
     METHOD: ResponseMethod = ResponseMethod.POST
 
-    # AUX ------------------------------------------
-    BODY: Optional[Type__RequestBody] = None
-    # REQUEST: Optional[requests.Request] = None
-    RESPONSE: Optional[requests.Response] = None
-    EXCEPTION: Union[None, requests.ConnectTimeout, Exception] = None
-
-    attempt_all: int
-    INDEX: int = 0
+    # INIT ------------------------------------------
+    BODY: Optional[Type__RequestBody]
+    # REQUEST: Optional[requests.Request]
+    RESPONSE: Optional[requests.Response]
+    EXX: Union[None, requests.ConnectTimeout, Exception]
     TIMESTAMP: float
+
+    # AUX ------------------------------------------
+    INDEX: int = 0
 
     def __init__(
             self,
@@ -62,10 +65,14 @@ class Client_RequestItem(UrlCreator, QThread):
     ):
         super().__init__()
 
-        if body is not None:
-            self.BODY = body
+        # INITS ------------------------------------
         if method is not None:
             self.METHOD = method
+
+        self.BODY = body
+        self.RESPONSE = None
+        self.EXX = None
+        self.TIMESTAMP = 0
 
         # if url is None:
         #     url = self.HOST
@@ -78,36 +85,38 @@ class Client_RequestItem(UrlCreator, QThread):
 
         self.__class__.INDEX += 1
         self.INDEX = int(self.__class__.INDEX)
-        self.attempt_all = 0
-        self.RETRY_COUNT = 0
-        self.TIMESTAMP = time.time()
 
+        # START ------------------------------------
         if self.START_ON_INIT:
             self.start()
 
     def check_success(self) -> bool:
-        result = False
-        if self.RESPONSE is not None:
-            result = self.RESPONSE.ok
-        return result
+        return self.RESPONSE is not None and self.RESPONSE.ok
 
     def __str__(self) -> str:
-        return f"[{self.INDEX=}/{self.attempt_all=}/{self.RETRY_COUNT=}/{self.check_success()=}]{self.EXCEPTION=}/{self.RESPONSE=}"
+        return f"[{self.INDEX=}/{self.retry_index=}/{self.check_success()=}]{self.EXX=}/{self.RESPONSE=}"
 
     def __repr__(self) -> str:
         return str(self)
 
-    def run(self) -> None:
-        self.RETRY_COUNT = 0
+    # ------------------------------------------------------------------------------------------------
+    def start(self, *args):
+        """
+        apply only one thread at once (from stack)!
+        """
+        if not self.isRunning():
+            super().start(*args)
 
+    def run(self) -> None:
         url = self.URL_create()
 
-        while self.RETRY_COUNT == 0 or self.RETRY_COUNT < self.RETRY_LIMIT:
-            self.RETRY_COUNT += 1
-            self.attempt_all += 1
+        for self.retry_index in range(self.RETRY_LIMIT):
+            if self.retry_index > 0:
+                time.sleep(self.RETRY_TIMEOUT)
 
+            self.TIMESTAMP = time.time()
             self.RESPONSE = None
-            self.EXCEPTION = None
+            self.EXX = None
 
             with requests.Session() as session:
                 try:
@@ -116,23 +125,11 @@ class Client_RequestItem(UrlCreator, QThread):
                     elif self.METHOD == ResponseMethod.GET:
                         self.RESPONSE = session.get(url=url, timeout=self.TIMEOUT_SEND)
                 except Exception as exx:
-                    self.EXCEPTION = exx
+                    self.EXX = exx
 
             print(self)
             if self.check_success():
                 break
-
-    # ---------------------------------------------------------------
-    # DONT USE anything LIKE THIS BELOW!!!
-    # def start(self, *args):
-    #     if not self.isRunning():
-    #         super().start(*args)
-
-    # def post(self, url=None, body=None):
-    #     self.start()
-
-    # def get(self, url=None):  #????
-    #     self.start()
 
 
 # =====================================================================================================================
@@ -141,22 +138,22 @@ class Client_RequestsStack(QThread):
 
     # SETTINGS -------------------------------------
     REQUEST_CLS: Type[Client_RequestItem] = Client_RequestItem
-    ATTEMPT_SEND_LIMIT: int = 1
 
     # AUX ------------------------------------------
     __stack: deque
-    request_last: Optional[Client_RequestItem] = None
 
-    def __init__(self, request_cls: Optional[Type[REQUEST_CLS]] = None):
+    def __init__(self):
         super().__init__()
-        if request_cls is not None:
-            self.REQUEST_CLS = request_cls
-
         self.__stack = deque()
 
     @property
     def stack(self) -> deque:
         return self.__stack
+
+    @property
+    def request_active(self) -> Optional[Client_RequestItem]:
+        if self.stack:
+            return self.stack[0]
 
     # ------------------------------------------------------------------------------------------------
     def start(self, *args):
@@ -168,40 +165,21 @@ class Client_RequestsStack(QThread):
 
     # ------------------------------------------------------------------------------------------------
     def run(self):
-        stack_attempt = 0
+        # WORK -----------------------------------------
         while len(self.stack):
-            stack_attempt += 1
+            print(f"[STACK]len={len(self.stack)}")
+            self.request_active.run()
 
-            # NEXT -----------------------------------------
-            # change last
-            if self.request_last is None or self.request_last.check_success():
-                stack_attempt = 0
-                self.request_last = self.stack[0]
-
-                if self.request_last.check_success():
-                    self.stack.popleft()
-                continue
-
-            # WORK -----------------------------------------
-            print()
-            print(f"{stack_attempt=}")
-            print(f"len={len(self.stack)}")
-            self.request_last.run()
-
-            if self.request_last.check_success():
+            if self.request_active.check_success():
                 self.stack.popleft()
-                continue
-
-            print(f"len={len(self.stack)}/{self.stack=}")
-            if stack_attempt == self.ATTEMPT_SEND_LIMIT:
-                break
             else:
-                time.sleep(1)
+                break
 
-        if len(self.stack):
-            print(f"[WARN] stack is stopped by some errors")
+        # FINISH -----------------------------------------
+        if self.check_success():
+            print(f"[OK] STACK is empty")
         else:
-            print(f"[OK] stack is empty")
+            print(f"[WARN] STACK is stopped by some errors {self.request_active.EXX=}")
 
     def send(self, **kwargs) -> None:    # maybe rename to SEND???
         """
@@ -213,8 +191,7 @@ class Client_RequestsStack(QThread):
         self.start()
 
     def check_success(self) -> bool:
-        result = len(self.stack) == 0 and self.request_last.check_success()
-        return result
+        return self.request_active is None
 
 
 # =====================================================================================================================

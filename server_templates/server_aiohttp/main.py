@@ -87,7 +87,7 @@ class ServerAiohttpBase(QThread):
         NOTE: this will block process!
         but if start() in thread - it would be OK!
 
-        EXCEPTION will not catch from start!!! but will CAUSE SYS_EXIT!!!
+        EXX will not catch from start!!! but will CAUSE SYS_EXIT!!!
         """
         try:
             web.run_app(app=self._app, port=self.PORT)
