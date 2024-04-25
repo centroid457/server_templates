@@ -8,6 +8,7 @@ from enum import Enum, auto
 from object_info import ObjectInfo
 
 from server_templates.url import UrlCreator
+from logger_aux import Logger
 
 
 # =====================================================================================================================
@@ -18,6 +19,9 @@ Type__RequestBody = Union[str, dict]
 class ResponseMethod(Enum):
     POST = auto()
     GET = auto()
+
+logger_Client_RequestItem = Logger("Client_RequestItem")
+logger_Client_RequestsStack = Logger("Client_RequestsStack")
 
 
 # =====================================================================================================================
@@ -91,7 +95,9 @@ class Client_RequestItem(UrlCreator, QThread):
             self.start()
 
     def check_success(self) -> bool:
-        return self.RESPONSE is not None and self.RESPONSE.ok
+        result = self.RESPONSE is not None and self.RESPONSE.ok
+        logger_Client_RequestItem.LOGGER.debug(result)
+        return result
 
     def __str__(self) -> str:
         return f"[{self.INDEX=}/{self.retry_index=}/{self.check_success()=}]{self.EXX=}/{self.RESPONSE=}"
@@ -105,9 +111,13 @@ class Client_RequestItem(UrlCreator, QThread):
         apply only one thread at once (from stack)!
         """
         if not self.isRunning():
+            logger_Client_RequestItem.LOGGER.debug("start")
+
             super().start(*args)
 
     def run(self) -> None:
+        logger_Client_RequestItem.LOGGER.debug("run")
+
         url = self.URL_create()
 
         for self.retry_index in range(self.RETRY_LIMIT):
@@ -161,12 +171,17 @@ class Client_RequestsStack(QThread):
         apply only one thread at once (from stack)!
         """
         if not self.isRunning():
+            logger_Client_RequestsStack.LOGGER.debug("start")
             super().start(*args)
 
     # ------------------------------------------------------------------------------------------------
     def run(self):
+        logger_Client_RequestsStack.LOGGER.debug("run")
+
         # WORK -----------------------------------------
         while len(self.stack):
+            logger_Client_RequestsStack.LOGGER.debug("run cycle")
+
             print(f"[STACK]len={len(self.stack)}")
             self.request_active.run()
 
@@ -191,7 +206,9 @@ class Client_RequestsStack(QThread):
         self.start()
 
     def check_success(self) -> bool:
-        return self.request_active is None
+        result = self.request_active is None
+        logger_Client_RequestsStack.LOGGER.debug(result)
+        return result
 
 
 # =====================================================================================================================

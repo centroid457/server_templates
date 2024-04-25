@@ -2,6 +2,7 @@
 pytest
 requirements-checker
 object-info
+logger-aux
 
 # ========================================
 # SPECIAL FOR THIS PROJECT ---------------

@@ -40,7 +40,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 2, 16)
+    VERSION: Tuple[int, int, int] = (0, 2, 17)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file",
     ]
@@ -48,7 +48,7 @@ class PROJECT:
         "..."
     ]
     NEWS: List[str] = [
-        "[Client] big ref",
+        "[Client] try add logger-aux",
     ]
 
     # FINALIZE -----------------------------------------------
