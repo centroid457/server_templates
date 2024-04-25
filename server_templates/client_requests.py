@@ -8,7 +8,12 @@ from enum import Enum, auto
 from object_info import ObjectInfo
 
 from server_templates.url import UrlCreator
+
+
+# =====================================================================================================================
 from logger_aux import Logger
+logger_Client_RequestItem = Logger("Client_RequestItem")
+logger_Client_RequestsStack = Logger("Client_RequestsStack")
 
 
 # =====================================================================================================================
@@ -19,9 +24,6 @@ Type__RequestBody = Union[str, dict]
 class ResponseMethod(Enum):
     POST = auto()
     GET = auto()
-
-logger_Client_RequestItem = Logger("Client_RequestItem")
-logger_Client_RequestsStack = Logger("Client_RequestsStack")
 
 
 # =====================================================================================================================

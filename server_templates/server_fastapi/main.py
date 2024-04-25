@@ -17,6 +17,11 @@ from starlette.responses import Response
 
 
 # =====================================================================================================================
+from logger_aux import Logger
+logger_ServerFastApi_Thread = Logger("ServerFastApi_Thread")
+
+
+# =====================================================================================================================
 class DataExample:
     int = 1
     float = 1.2
@@ -44,6 +49,7 @@ def create_app__FastApi(self: Any = None, data: Any = None) -> FastAPI:
 
     @app.post("/post/dict")
     async def post(item: Item):
+        logger_ServerFastApi_Thread.LOGGER.debug(item)
         data.dict.update(item)
         print(data.dict)
         return item
@@ -543,11 +549,13 @@ class ServerFastApi_Thread(QThread):
         self.data = app.data
 
     def run(self):
+        logger_ServerFastApi_Thread.LOGGER.debug("run")
         uvicorn.run(self.app, host=self.HOST, port=self.PORT)
 
     def start(self, *args, **kwargs):
         super().start()
         time.sleep(1)
+
 
 def start_2__by_thread(app: FastAPI = None) -> Never:
     server = ServerFastApi_Thread(app)
