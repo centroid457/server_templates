@@ -15,10 +15,7 @@ import uvicorn
 from starlette import status
 from starlette.responses import Response
 
-
-# =====================================================================================================================
 from logger_aux import Logger
-logger_ServerFastApi_Thread = Logger("ServerFastApi_Thread")
 
 
 # =====================================================================================================================
@@ -41,6 +38,7 @@ def create_app__FastApi(self: Any = None, data: Any = None) -> FastAPI:
 
     app = FastAPI()
     app.data = data
+    app.LOGGER = Logger("FastAPI").LOGGER
 
     # WORK -----------------------------------------------------------
     @app.get("/")
@@ -49,7 +47,7 @@ def create_app__FastApi(self: Any = None, data: Any = None) -> FastAPI:
 
     @app.post("/post/dict")
     async def post(item: Item):
-        logger_ServerFastApi_Thread.LOGGER.debug(item)
+        app.LOGGER.debug(item)
         data.dict.update(item)
         print(data.dict)
         return item
@@ -522,7 +520,7 @@ def start_1__by_terminal(app: FastAPI) -> None:
 
 
 # =====================================================================================================================
-class ServerFastApi_Thread(QThread):
+class ServerFastApi_Thread(Logger, QThread):
     """
     WORK IN both LINUX/Win!!!
     """
@@ -549,7 +547,7 @@ class ServerFastApi_Thread(QThread):
         self.data = app.data
 
     def run(self):
-        logger_ServerFastApi_Thread.LOGGER.debug("run")
+        self.LOGGER.debug("run")
         uvicorn.run(self.app, host=self.HOST, port=self.PORT)
 
     def start(self, *args, **kwargs):

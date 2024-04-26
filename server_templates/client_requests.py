@@ -6,14 +6,9 @@ from collections import deque
 from enum import Enum, auto
 
 from object_info import ObjectInfo
+from logger_aux import Logger
 
 from server_templates.url import UrlCreator
-
-
-# =====================================================================================================================
-from logger_aux import Logger
-logger_Client_RequestItem = Logger("Client_RequestItem")
-logger_Client_RequestsStack = Logger("Client_RequestsStack")
 
 
 # =====================================================================================================================
@@ -27,7 +22,7 @@ class ResponseMethod(Enum):
 
 
 # =====================================================================================================================
-class Client_RequestItem(UrlCreator, QThread):
+class Client_RequestItem(Logger, UrlCreator, QThread):
     """
     DONT USE IT AS ONE INSTANCE FOR SEVERAL REQUESTS!!!
     You need keep it only to manage results or sent in further time!
@@ -98,7 +93,7 @@ class Client_RequestItem(UrlCreator, QThread):
 
     def check_success(self) -> bool:
         result = self.RESPONSE is not None and self.RESPONSE.ok
-        logger_Client_RequestItem.LOGGER.debug(result)
+        self.LOGGER.debug(result)
         return result
 
     def __str__(self) -> str:
@@ -113,12 +108,12 @@ class Client_RequestItem(UrlCreator, QThread):
         apply only one thread at once (from stack)!
         """
         if not self.isRunning():
-            logger_Client_RequestItem.LOGGER.debug("start")
+            self.LOGGER.debug("start")
 
             super().start(*args)
 
     def run(self) -> None:
-        logger_Client_RequestItem.LOGGER.debug("run")
+        self.LOGGER.debug("run")
 
         url = self.URL_create()
 
@@ -145,9 +140,7 @@ class Client_RequestItem(UrlCreator, QThread):
 
 
 # =====================================================================================================================
-class Client_RequestsStack(QThread):
-    # TODO: save send data
-
+class Client_RequestsStack(Logger, QThread):
     # SETTINGS -------------------------------------
     REQUEST_CLS: Type[Client_RequestItem] = Client_RequestItem
 
@@ -173,16 +166,16 @@ class Client_RequestsStack(QThread):
         apply only one thread at once (from stack)!
         """
         if not self.isRunning():
-            logger_Client_RequestsStack.LOGGER.debug("start")
+            self.LOGGER.debug("start")
             super().start(*args)
 
     # ------------------------------------------------------------------------------------------------
     def run(self):
-        logger_Client_RequestsStack.LOGGER.debug("run")
+        self.LOGGER.debug("run")
 
         # WORK -----------------------------------------
         while len(self.stack):
-            logger_Client_RequestsStack.LOGGER.debug("run cycle")
+            self.LOGGER.debug("run cycle")
 
             print(f"[STACK]len={len(self.stack)}")
             self.request_active.run()
@@ -198,18 +191,18 @@ class Client_RequestsStack(QThread):
         else:
             print(f"[WARN] STACK is stopped by some errors {self.request_active.EXX=}")
 
-    def send(self, **kwargs) -> None:    # maybe rename to SEND???
+    def send(self, **kwargs) -> None:
         """
         work usually with POST
         """
-        # TODO: add locker???
         item = self.REQUEST_CLS(**kwargs)
+        self.LOGGER.debug(item)
         self.stack.append(item)
         self.start()
 
     def check_success(self) -> bool:
         result = self.request_active is None
-        logger_Client_RequestsStack.LOGGER.debug(result)
+        self.LOGGER.debug(result)
         return result
 
 
