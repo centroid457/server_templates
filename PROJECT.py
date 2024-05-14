@@ -48,7 +48,10 @@ class PROJECT:
         "...",
     ]
     NEWS: List[str] = [
-        "[FASTAPI] fix HOST IP to 0.0.0.0 for correct access +add comments",
+        ["[FASTAPI]",
+            "fix HOST IP to 0.0.0.0 for correct access +add comments",
+         ],
+        "[URL] fix HOST address in case of '0.0.0.0'",
     ]
 
     # FINALIZE -----------------------------------------------
