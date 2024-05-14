@@ -32,6 +32,9 @@ class UrlCreator:
         if route is None:
             route = self.ROUTE or ""
 
+        if host == "0.0.0.0":
+            host = "localhost"
+
         while route.startswith("/"):
             route = route[1:]
 
