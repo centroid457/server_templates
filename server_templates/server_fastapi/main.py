@@ -544,9 +544,21 @@ class ServerFastApi_Thread(Logger, QThread):
     """
     WORK IN both LINUX/Win!!!
     """
-    # HOST: str = "0.0.0.0"     # dont use 0.0.0.0 for FASTAPI!!! use localhost!!!
-    HOST: str = "localhost"
     PORT: int = 80
+    HOST: str = "0.0.0.0"
+    # HOST: str = "localhost"
+    """
+    HOST SETTINGS RULES
+    localhost - CANT ACCESS BY HOST_IP! only
+        http://localhost/ - OK!
+        http://127.0.0.1/ - OK!
+        http://192.168.75.140/ - FAIL!!!
+    
+    0.0.0.0 - ALL ARE OK!!!
+        http://localhost/ - OK!
+        http://127.0.0.1/ - OK!
+        http://192.168.75.140/ - OK!!!
+    """
 
     data: Any = None
     create_app: Callable[[Any], FastAPI] = create_app__FastApi
