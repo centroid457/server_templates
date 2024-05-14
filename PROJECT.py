@@ -40,15 +40,15 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 2, 19)
+    VERSION: Tuple[int, int, int] = (0, 2, 20)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file",
     ]
     FIXME: List[str] = [
-        "..."
+        "...",
     ]
     NEWS: List[str] = [
-        "[all] apply new Logger as nested",
+        "[FASTAPI] fix HOST IP to 0.0.0.0 for correct access +add comments",
     ]
 
     # FINALIZE -----------------------------------------------
