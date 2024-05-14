@@ -28,6 +28,26 @@ class DataExample:
 
 
 # =====================================================================================================================
+def _minimal():
+    import uvicorn
+    from fastapi import FastAPI, Response
+    from fastapi.responses import RedirectResponse
+
+    app = FastAPI()
+
+    @app.get("/")
+    async def redirect() -> Response:
+        return RedirectResponse(url="/docs")
+
+    @app.get("/{path}")
+    async def hello(path):
+        print(path)
+        return path
+
+    uvicorn.run(app, host="localhost", port=80)
+
+
+# =====================================================================================================================
 def create_app__FastApi(self: Any = None, data: Any = None) -> FastAPI:
     class Item(BaseModel):
         value: int
