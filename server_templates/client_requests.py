@@ -134,7 +134,7 @@ class Client_RequestItem(Logger, UrlCreator, QThread):
                 except Exception as exx:
                     self.EXX = exx
 
-            print(self)
+            self.LOGGER.debug(self)
             if self.check_success():
                 break
 
@@ -171,13 +171,11 @@ class Client_RequestsStack(Logger, QThread):
 
     # ------------------------------------------------------------------------------------------------
     def run(self):
-        self.LOGGER.debug("run")
+        self.LOGGER.debug("[STACK]run")
 
         # WORK -----------------------------------------
         while len(self.stack):
-            self.LOGGER.debug("run cycle")
-
-            print(f"[STACK]len={len(self.stack)}")
+            self.LOGGER.debug(f"[STACK]run cycle with len={len(self.stack)}")
             self.request_active.run()
 
             if self.request_active.check_success():
@@ -187,9 +185,9 @@ class Client_RequestsStack(Logger, QThread):
 
         # FINISH -----------------------------------------
         if self.check_success():
-            print(f"[OK] STACK is empty")
+            self.LOGGER.info(f"[STACK] is empty")
         else:
-            print(f"[WARN] STACK is stopped by some errors {self.request_active.EXX=}")
+            self.LOGGER.warn(f"[STACK] is stopped [at len={len(self.stack)}] by some errors [exx={self.request_active.EXX=}]")
 
     def send(self, **kwargs) -> None:
         """
@@ -197,7 +195,7 @@ class Client_RequestsStack(Logger, QThread):
         """
         item = self.REQUEST_CLS(**kwargs)
         self.stack.append(item)
-        self.LOGGER.debug(f"[STACK].APPEND=len={len(self.stack)}")
+        self.LOGGER.debug(f"[STACK].APPEND len={len(self.stack)}")
         self.start()
 
     def check_success(self) -> bool:
