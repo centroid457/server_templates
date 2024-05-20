@@ -166,7 +166,7 @@ class Client_RequestsStack(Logger, QThread):
         apply only one thread at once (from stack)!
         """
         if not self.isRunning():
-            self.LOGGER.debug("start")
+            self.LOGGER.debug(f"start {self.request_active}")
             super().start(*args)
 
     # ------------------------------------------------------------------------------------------------
@@ -196,8 +196,8 @@ class Client_RequestsStack(Logger, QThread):
         work usually with POST
         """
         item = self.REQUEST_CLS(**kwargs)
-        self.LOGGER.debug(item)
         self.stack.append(item)
+        self.LOGGER.debug(f"[STACK].APPEND=len={len(self.stack)}")
         self.start()
 
     def check_success(self) -> bool:

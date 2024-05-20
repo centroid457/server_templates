@@ -40,7 +40,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 2, 20)
+    VERSION: Tuple[int, int, int] = (0, 2, 21)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file",
     ]
@@ -48,10 +48,7 @@ class PROJECT:
         "...",
     ]
     NEWS: List[str] = [
-        ["[FASTAPI]",
-            "fix HOST IP to 0.0.0.0 for correct access +add comments",
-         ],
-        "[URL] fix HOST address in case of '0.0.0.0'",
+        "[clientSTACK] add zero logs",
     ]
 
     # FINALIZE -----------------------------------------------
