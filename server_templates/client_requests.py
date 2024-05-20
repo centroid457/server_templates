@@ -96,7 +96,7 @@ class Client_RequestItem(Logger, UrlCreator, QThread):
         else:
             self.__class__.INDEX += 1
 
-        self.INDEX = int(self.__class__.INDEX)
+        self.INDEX = self.__class__.INDEX
 
     def check_success(self) -> bool:
         result = self.RESPONSE is not None and self.RESPONSE.ok
