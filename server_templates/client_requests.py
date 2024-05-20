@@ -93,7 +93,7 @@ class Client_RequestItem(Logger, UrlCreator, QThread):
 
     def check_success(self) -> bool:
         result = self.RESPONSE is not None and self.RESPONSE.ok
-        self.LOGGER.debug(result)
+        # self.LOGGER.debug(result)
         return result
 
     def __str__(self) -> str:
