@@ -52,7 +52,7 @@ class Client_RequestItem(Logger, UrlCreator, QThread):
     TIMESTAMP: float
 
     # AUX ------------------------------------------
-    INDEX: int = 0
+    INDEX: int | None = None
 
     def __init__(
             self,
@@ -84,12 +84,19 @@ class Client_RequestItem(Logger, UrlCreator, QThread):
         if route is not None:
             self.ROUTE = route
 
-        self.__class__.INDEX += 1
-        self.INDEX = int(self.__class__.INDEX)
+        self.index__init()
 
         # START ------------------------------------
         if self.START_ON_INIT:
             self.start()
+
+    def index__init(self) -> None:
+        if self.__class__.INDEX is None:
+            self.__class__.INDEX = 0
+        else:
+            self.__class__.INDEX += 1
+
+        self.INDEX = int(self.__class__.INDEX)
 
     def check_success(self) -> bool:
         result = self.RESPONSE is not None and self.RESPONSE.ok
