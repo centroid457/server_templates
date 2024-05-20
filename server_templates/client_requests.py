@@ -38,7 +38,7 @@ class Client_RequestItem(Logger, UrlCreator, QThread):
     START_ON_INIT: bool = None      # DONT DELETE!!! useful for delayed/pending requests
     TIMEOUT_SEND: float = 1
 
-    RETRY_LIMIT: int = 1
+    RETRY_LIMIT: int | None = 1
     RETRY_TIMEOUT: float = 0.5
     retry_index: int = 0
 
@@ -114,29 +114,36 @@ class Client_RequestItem(Logger, UrlCreator, QThread):
 
     def run(self) -> None:
         self.LOGGER.debug("run")
+        while True:
+            self._send()
+
+            # CHECK EXIT -------------------------------
+            if self.check_success():
+                return
+
+            if self.RETRY_LIMIT and self.retry_index == self.RETRY_LIMIT - 1:
+                return
+            else:
+                time.sleep(self.RETRY_TIMEOUT)
+                self.retry_index += 1
+
+    def _send(self) -> None:
+        self.TIMESTAMP = time.time()
+        self.RESPONSE = None
+        self.EXX = None
 
         url = self.URL_create()
 
-        for self.retry_index in range(self.RETRY_LIMIT):
-            if self.retry_index > 0:
-                time.sleep(self.RETRY_TIMEOUT)
+        with requests.Session() as session:
+            try:
+                if self.METHOD == ResponseMethod.POST:
+                    self.RESPONSE = session.post(url=url, json=self.BODY or {}, timeout=self.TIMEOUT_SEND)
+                elif self.METHOD == ResponseMethod.GET:
+                    self.RESPONSE = session.get(url=url, timeout=self.TIMEOUT_SEND)
+            except Exception as exx:
+                self.EXX = exx
 
-            self.TIMESTAMP = time.time()
-            self.RESPONSE = None
-            self.EXX = None
-
-            with requests.Session() as session:
-                try:
-                    if self.METHOD == ResponseMethod.POST:
-                        self.RESPONSE = session.post(url=url, json=self.BODY or {}, timeout=self.TIMEOUT_SEND)
-                    elif self.METHOD == ResponseMethod.GET:
-                        self.RESPONSE = session.get(url=url, timeout=self.TIMEOUT_SEND)
-                except Exception as exx:
-                    self.EXX = exx
-
-            self.LOGGER.debug(self)
-            if self.check_success():
-                break
+        self.LOGGER.debug(self)
 
 
 # =====================================================================================================================

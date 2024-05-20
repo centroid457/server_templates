@@ -31,7 +31,7 @@ class Test__RequestItem:
         pass
 
     # -----------------------------------------------------------------------------------------------------------------
-    def test__1(self):
+    def test__with_server(self):
         TEST_DATA = {'value': 1}
 
         # SERVER -------------------------------------
@@ -70,7 +70,7 @@ class Test__RequestItem:
         assert victim.RESPONSE.json() == "str"
 
     # -----------------------------------------------------------------------------------------------------------------
-    def test__2_noserver(self):
+    def test__noserver(self):
         TEST_DATA = {'value': 1}
         host_wrong = "host_wrong"
 
