@@ -41,6 +41,7 @@ class Client_RequestItem(Logger, UrlCreator, QThread):
     RETRY_LIMIT: int | None = 1
     RETRY_TIMEOUT: float = 0.5
     retry_index: int = 0
+    SUCCESS_IF_FAIL_CODE: bool | None = None    # need to separate timedout and fail statuscode
 
     METHOD: ResponseMethod = ResponseMethod.POST
 
@@ -99,7 +100,9 @@ class Client_RequestItem(Logger, UrlCreator, QThread):
         self.INDEX = self.__class__.INDEX
 
     def check_success(self) -> bool:
-        result = self.RESPONSE is not None and self.RESPONSE.ok
+        result = self.RESPONSE is not None
+        if not self.SUCCESS_IF_FAIL_CODE:
+            result &= self.RESPONSE.ok
         # self.LOGGER.debug(result)
         return result
 
@@ -124,15 +127,16 @@ class Client_RequestItem(Logger, UrlCreator, QThread):
         while True:
             self._send()
 
-            # CHECK EXIT -------------------------------
+            # CHECK EXIT ----------------------------------------------
             if self.check_success():
                 return
 
+            # retry LIMIT ---------------------
             if self.RETRY_LIMIT and self.retry_index == self.RETRY_LIMIT - 1:
                 return
-            else:
-                time.sleep(self.RETRY_TIMEOUT)
-                self.retry_index += 1
+
+            self.retry_index += 1
+            time.sleep(self.RETRY_TIMEOUT)
 
     def _send(self) -> None:
         self.TIMESTAMP = time.time()
