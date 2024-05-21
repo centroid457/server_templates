@@ -40,7 +40,7 @@ class PROJECT:
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 3, 0)
+    VERSION: Tuple[int, int, int] = (0, 3, 1)
     TODO: List[str] = [
         "add full logger for requests (with time+body) save in file",
     ]
@@ -48,7 +48,7 @@ class PROJECT:
         "...",
     ]
     NEWS: List[str] = [
-        "[clientRequestsItem] add stackLen in __str__()",
+        "[clientRequestsItem] fix stackLen ",
     ]
 
     # FINALIZE -----------------------------------------------

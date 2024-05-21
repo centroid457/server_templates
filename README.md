@@ -1,4 +1,4 @@
-# server_templates (v0.3.0)
+# server_templates (v0.3.1)
 
 ## DESCRIPTION_SHORT
 templates for servers

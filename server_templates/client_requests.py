@@ -104,7 +104,7 @@ class Client_RequestItem(Logger, UrlCreator, QThread):
         return result
 
     def __str__(self) -> str:
-        return f"[{self.INDEX=}/len={self.__class__.INDEX}/{self.retry_index=}/{self.check_success()=}]{self.EXX=}/{self.RESPONSE=}"
+        return f"[{self.INDEX=}/len={self.__class__.INDEX+1}/{self.retry_index=}/{self.check_success()=}]{self.EXX=}/{self.RESPONSE=}"
 
     def __repr__(self) -> str:
         return str(self)
