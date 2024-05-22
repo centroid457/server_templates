@@ -1,3 +1,6 @@
+# DON'T DELETE!
+# useful to start smth without pytest and not to run in main script!
+
 from server_templates import ServerAiohttpBase
 import pathlib
 import time

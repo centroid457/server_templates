@@ -8,10 +8,11 @@ from tempfile import TemporaryDirectory
 from typing import *
 from configparser import ConfigParser
 import requests
+from aiohttp import web
 
 from server_templates.client_requests import Client_RequestItem, ResponseMethod, Client_RequestsStack
 from server_templates.url import UrlCreator
-from server_templates.server_aiohttp import ServerAiohttpBase, web
+from server_templates.server_aiohttp import ServerAiohttpBase
 from server_templates.server_fastapi import ServerFastApi_Thread
 
 
@@ -19,16 +20,16 @@ from server_templates.server_fastapi import ServerFastApi_Thread
 class Test__RequestItem:
     PORT_TEST: int = 8088
 
-    @classmethod
-    def setup_class(cls):
-        pass
-
-    @classmethod
-    def teardown_class(cls):
-        pass
-
-    def setup_method(self, method):
-        pass
+    # @classmethod
+    # def setup_class(cls):
+    #     pass
+    #
+    # @classmethod
+    # def teardown_class(cls):
+    #     pass
+    #
+    # def setup_method(self, method):
+    #     pass
 
     # -----------------------------------------------------------------------------------------------------------------
     def test__with_server(self):

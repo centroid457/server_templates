@@ -14,16 +14,16 @@ from server_templates.url import UrlCreator
 
 # =====================================================================================================================
 class Test__Url:
-    @classmethod
-    def setup_class(cls):
-        pass
-
-    @classmethod
-    def teardown_class(cls):
-        pass
-
-    def setup_method(self, method):
-        pass
+    # @classmethod
+    # def setup_class(cls):
+    #     pass
+    #
+    # @classmethod
+    # def teardown_class(cls):
+    #     pass
+    #
+    # def setup_method(self, method):
+    #     pass
 
     # -----------------------------------------------------------------------------------------------------------------
     def test__UrlCreator(self):

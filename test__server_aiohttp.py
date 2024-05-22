@@ -8,11 +8,12 @@ from tempfile import TemporaryDirectory
 from typing import *
 from configparser import ConfigParser
 import requests
+from aiohttp import web
 
 from requirements_checker import ReqCheckStr_Os
 
 from server_templates.url import UrlCreator
-from server_templates.server_aiohttp import ServerAiohttpBase, web
+from server_templates.server_aiohttp import ServerAiohttpBase
 
 
 # =====================================================================================================================
@@ -21,16 +22,16 @@ class Test__ServerAiohttp:
     # FIXME: CANT SEPARATE TESTS!!!! WORK ONLY one BY one
     PORT_TEST: int = 8081
 
-    @classmethod
-    def setup_class(cls):
-        pass
-
-    @classmethod
-    def teardown_class(cls):
-        pass
-
-    def setup_method(self, method):
-        pass
+    # @classmethod
+    # def setup_class(cls):
+    #     pass
+    #
+    # @classmethod
+    # def teardown_class(cls):
+    #     pass
+    #
+    # def setup_method(self, method):
+    #     pass
 
     # -----------------------------------------------------------------------------------------------------------------
     def test__ALL(self):

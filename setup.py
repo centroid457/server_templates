@@ -3,11 +3,12 @@ from PROJECT import PROJECT
 
 
 # =====================================================================================================================
-VERSION = (0, 0, 1)   # use find_packages to keep all internal pkgs for pypi
+# VERSION = (0, 0, 1)   # use find_packages to keep all internal pkgs for pypi
+VERSION = (0, 0, 2)   # fix ability to read russian text in readme
 
 
 # =====================================================================================================================
-with open("README.md", "r") as f:
+with open("README.md", mode="r", encoding="utf8") as f:
     readme = f.read()
 
 

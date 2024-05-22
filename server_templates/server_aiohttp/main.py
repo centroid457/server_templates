@@ -17,10 +17,11 @@ from object_info import ObjectInfo
 
 
 # =====================================================================================================================
-Type__Self = Any
-Type__Request = Any
+TYPE__SELF = Any
+TYPE__REQUEST = Any
 
 
+# =====================================================================================================================
 class Exx__AiohttpServerStartSameAddress(Exception):
     pass
 
@@ -33,7 +34,8 @@ class Exx__AiohttpServerOtherError(Exception):
     pass
 
 
-def decorator__log_request_response(func: Callable[[Type__Self, Type__Request], Coroutine[Any, Any, web.Response]]):
+# =====================================================================================================================
+def decorator__log_request_response(func: Callable[[TYPE__SELF, TYPE__REQUEST], Coroutine[Any, Any, web.Response]]):
     @functools.wraps(func)
     async def _wrapper(self, request):
         # ObjectInfo(request).print()

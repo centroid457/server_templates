@@ -1,9 +1,10 @@
 import time
 from typing import *
 import requests
-from PyQt5.QtCore import QThread
 from collections import deque
 from enum import Enum, auto
+
+from PyQt5.QtCore import QThread
 
 from object_info import ObjectInfo
 from logger_aux import Logger
@@ -12,8 +13,8 @@ from server_templates.url import UrlCreator
 
 
 # =====================================================================================================================
-Type__Response = Union[None, requests.Response, requests.ConnectTimeout]
-Type__RequestBody = Union[str, dict]
+TYPE__RESPONSE = Union[None, requests.Response, requests.ConnectTimeout]
+TYPE__REQUEST_BODY = Union[str, dict]
 
 
 class ResponseMethod(Enum):
@@ -46,7 +47,7 @@ class Client_RequestItem(Logger, UrlCreator, QThread):
     METHOD: ResponseMethod = ResponseMethod.POST
 
     # INIT ------------------------------------------
-    BODY: Optional[Type__RequestBody]
+    BODY: Optional[TYPE__REQUEST_BODY]
     # REQUEST: Optional[requests.Request]
     RESPONSE: Optional[requests.Response]
     EXX: Union[None, requests.ConnectTimeout, Exception]
@@ -57,7 +58,7 @@ class Client_RequestItem(Logger, UrlCreator, QThread):
 
     def __init__(
             self,
-            body: Optional[Type__RequestBody] = None,
+            body: Optional[TYPE__REQUEST_BODY] = None,
             method: Optional[ResponseMethod] = None,
 
             # url: Optional[str] = None,
