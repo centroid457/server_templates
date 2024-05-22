@@ -101,11 +101,13 @@ class Client_RequestItem(Logger, UrlCreator, QThread):
         self.INDEX = self.__class__.INDEX
 
     def check_success(self) -> bool:
-        result = self.RESPONSE is not None
-        if not self.SUCCESS_IF_FAIL_CODE:
-            result &= self.RESPONSE.ok
-        # self.LOGGER.debug(result)
-        return result
+        if self.RESPONSE is None:
+            return False
+
+        if self.SUCCESS_IF_FAIL_CODE:
+            return True
+        else:
+            return self.RESPONSE.ok
 
     def __str__(self) -> str:
         return f"[{self.INDEX=}/len={self.__class__.INDEX+1}/{self.retry_index=}/{self.check_success()=}]{self.EXX=}/{self.RESPONSE=}"
