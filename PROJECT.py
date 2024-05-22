@@ -17,6 +17,7 @@ class PROJECT:
     NAME_IMPORT: str = "server_templates"
     KEYWORDS: List[str] = [
         "api", "api server", "http server",
+        "requests",
         "aiohttp",
         "FastApi",
     ]
@@ -33,22 +34,26 @@ class PROJECT:
         # "feat1",
         # ["feat2", "block1", "block2"],
 
-        ["server",
-            "aiohttp (try not to use, as old)", "FastApi (preferred)",
+        ["[SERVERS]",
+            "[aiohttp] (try not to use, as old)",
+            "[FastApi] (preferred)",
          ],
         "client_requests item+stack",
     ]
 
     # HISTORY -----------------------------------------------
-    VERSION: Tuple[int, int, int] = (0, 3, 2)
+    VERSION: Tuple[int, int, int] = (0, 3, 3)
     TODO: List[str] = [
-        "add full logger for requests (with time+body) save in file",
+        "...",
     ]
     FIXME: List[str] = [
         "...",
     ]
     NEWS: List[str] = [
-        "[clientRequestsItem] add SUCCESS_IF_FAIL_CODE",
+        "[clientRequestsItem] fix check_success",
+
+        "[__INIT__.py] fix import",
+        "apply last pypi template",
     ]
 
     # FINALIZE -----------------------------------------------
