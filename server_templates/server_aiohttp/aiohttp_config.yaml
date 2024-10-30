@@ -1,6 +1,0 @@
-# aiohttp_config.yaml
-postgres:
-  user: aiohttpdemo_user
-  password: aiohttpdemo_pass
-  host: localhost
-  port: 5432

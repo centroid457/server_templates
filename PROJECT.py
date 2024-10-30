@@ -33,12 +33,6 @@ class PROJECT:
     FEATURES: List[str] = [
         # "feat1",
         # ["feat2", "block1", "block2"],
-
-        ["[SERVERS]",
-            "[aiohttp] (try not to use, as old)",
-            "[FastApi] (preferred)",
-         ],
-        "client_requests item+stack",
     ]
 
     # HISTORY -----------------------------------------------
